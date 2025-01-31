@@ -9,8 +9,8 @@ import NodeWallet from "@coral-xyz/anchor/dist/cjs/nodewallet";
 import { PumpMeteora } from "../target/types/pump_meteora";
 import {
   createConfigTx,
-  launchTokenTx,
- 
+  createBondingCurveTx,
+  swapTx,
 } from "../lib/scripts";
 import { execTx } from "../lib/util";
 import {
@@ -62,7 +62,7 @@ export const setClusterConfig = async (
   );
 
   // Generate the program client from IDL.
-  program = anchor.workspace.Pumpfun as Program<PumpMeteora>;
+  program = anchor.workspace.PumpMeteora as Program<PumpMeteora>;
 
   console.log("ProgramId: ", program.programId.toBase58());
 };
@@ -80,10 +80,10 @@ export const configProject = async () => {
     platformSellFee: 0.69, // Example fee: 0.69%
     platformMigrationFee: 0.69, //  Example fee: 0.69%
 
-    curveLimit: new BN(42_000_000_000), //  Example limit: 42 SOL
+    curveLimit: new BN(62_000_000_000), //  Example limit: 42 SOL
 
     lamportAmountConfig: {
-      range: { min: new BN(2_000_000_000), max: new BN(2_000_000_000) },
+      range: { min: new BN(20_000_000_000), max: new BN(20_000_000_000) },
     },
     tokenSupplyConfig: {
       range: { min: new BN(1_000_000_000), max: new BN(1_000_000_000) },
@@ -101,8 +101,8 @@ export const configProject = async () => {
   await execTx(tx, solConnection, payer);
 };
 
-export const launchToken = async () => {
-  const tx = await launchTokenTx(
+export const createBondingCurve = async () => {
+  const tx = await createBondingCurveTx(
     TEST_DECIMALS,
     TEST_TOKEN_SUPPLY,
     TEST_VIRTUAL_RESERVES,
@@ -114,6 +114,24 @@ export const launchToken = async () => {
 
     payer.publicKey,
 
+    solConnection,
+    program
+  );
+
+  await execTx(tx, solConnection, payer);
+};
+
+export const swap = async (
+  token: PublicKey,
+
+  amount: number,
+  style: number
+) => {
+  const tx = await swapTx(
+    payer.publicKey,
+    token,
+    amount,
+    style,
     solConnection,
     program
   );

@@ -7,7 +7,7 @@ pub mod state;
 pub mod utils;
 
 use instructions::{
-    configure::*, create_bonding_curve::*,
+    configure::*, create_bonding_curve::*, swap::*,
 };
 use anchor_lang::prelude::*;
 use state::config::*;
@@ -47,6 +47,20 @@ pub mod pump_meteora {
             name,
             symbol,
             uri,
+            ctx.bumps.global_vault,
+        )
+    }
+
+    pub fn swap(
+        ctx: Context<Swap>,
+        amount: u64,
+        direction: u8,
+        minimum_receive_amount: u64,
+    ) -> Result<u64> {
+        ctx.accounts.handler(
+            amount,
+            direction,
+            minimum_receive_amount,
             ctx.bumps.global_vault,
         )
     }

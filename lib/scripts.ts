@@ -51,7 +51,7 @@ export const createConfigTx = async (
   return tx;
 };
 
-export const launchTokenTx = async (
+export const createBondingCurveTx = async (
   decimal: number,
   supply: number,
   reserve: number,
@@ -70,7 +70,7 @@ export const launchTokenTx = async (
 
   // Send the transaction to launch a token
   const tx = await program.methods
-    .launch(
+    .createBondingCurve(
       //  launch config
       decimal,
       new BN(supply),
@@ -101,3 +101,33 @@ export const launchTokenTx = async (
 
 
 
+export const swapTx = async (
+  user: PublicKey,
+  token: PublicKey,
+
+  amount: number,
+  style: number,
+
+  connection: Connection,
+  program: Program<PumpMeteora>
+) => {
+  const [configPda, _] = PublicKey.findProgramAddressSync(
+    [Buffer.from(SEED_CONFIG)],
+    program.programId
+  );
+  const configAccount = await program.account.config.fetch(configPda);
+
+  const tx = await program.methods
+    .swap(new BN(amount), style, new BN(amount))
+    .accounts({
+      teamWallet: configAccount.teamWallet,
+      user,
+      tokenMint: token,
+    })
+    .transaction();
+
+  tx.feePayer = user;
+  tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
+
+  return tx;
+};

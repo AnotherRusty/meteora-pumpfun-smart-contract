@@ -4,6 +4,10 @@
 resolution = true
 skip-lint = false
 
+[programs.devnet]
+usafun = "BV2E87QUHWrN7gd8Wiy8jZqMdGxZFJidguZykwgD6Br4"
+
+
 [programs.localnet]
 pump_meteora = "CVMyXKzZqFpnKgxsy4c62Cn1BxZvwGdyDtJTdE51vj9y"
 
@@ -11,8 +15,9 @@ pump_meteora = "CVMyXKzZqFpnKgxsy4c62Cn1BxZvwGdyDtJTdE51vj9y"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "Localnet"
-wallet = "~/.config/solana/id.json"
+cluster = "https://devnet.helius-rpc.com/?api-key=facb2b5c-c0d2-44b1-8538-986b895bf122"
+wallet = "./keys/admin.json"
 
 [scripts]
+build = "rm -rf target && anchor build && mkdir -p target/deploy && cp ./keys/program/3uHJMHzeiqdqQ3LNc5bNVxuCp224HGtStPkv1JUEcabr.json ./target/deploy/pump_meteora-keypair.json"
 test = "yarn run ts-mocha -p ./tsconfig.json -t 1000000 tests/**/*.ts"

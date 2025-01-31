@@ -149,10 +149,12 @@ impl<'info> CreateBondingCurve<'info> {
         global_config
             .lamport_amount_config
             .validate(&reserve_lamport)?;
+        msg!("lamport_amount_config {:?}", reserve_lamport);
 
         global_config
             .token_supply_config
             .validate(&(token_supply / decimal_multiplier))?;
+        msg!("token supply {:?} {:?}", token_supply, decimal_multiplier );
 
         global_config.token_decimals_config.validate(&decimals)?;
 

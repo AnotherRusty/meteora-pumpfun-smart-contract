@@ -8,10 +8,10 @@ export const TEST_NAME = "test spl token";
 export const TEST_SYMBOL = "TEST";
 export const TEST_URI =
   "https://ipfs.io/ipfs/QmWVzSC1ZTFiBYFiZZ6QivGUZ9awPJwqZECSFL1UD4gitC";
-export const TEST_VIRTUAL_RESERVES = 2_000_000_000;
-export const TEST_TOKEN_SUPPLY = 1_000_000_000_000;
+export const TEST_VIRTUAL_RESERVES = 20_000_000_000;
+export const TEST_TOKEN_SUPPLY = 1_000_000_000_000_000;
 export const TEST_DECIMALS = 6;
-export const TEST_INIT_BONDING_CURVE = 95;
+export const TEST_INIT_BONDING_CURVE = 80;
 
 const cluster: Cluster = "devnet";
 
