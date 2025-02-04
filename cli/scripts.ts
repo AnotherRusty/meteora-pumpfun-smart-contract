@@ -21,6 +21,9 @@ import {
   TEST_TOKEN_SUPPLY,
   TEST_URI,
   TEST_VIRTUAL_RESERVES,
+  TEST_INITIAL_VIRTUAL_TOKEN_RESERVES,
+  TEST_INITIAL_VIRTUAL_SOL_RESERVES,
+  TEST_INITIAL_REAL_TOKEN_RESERVES
 } from "../lib/constant";
 import { createMarket } from "../lib/create-market";
 
@@ -83,12 +86,16 @@ export const configProject = async () => {
     curveLimit: new BN(62_000_000_000), //  Example limit: 42 SOL
 
     lamportAmountConfig: {
-      range: { min: new BN(20_000_000_000), max: new BN(20_000_000_000) },
+      range: { min: new BN(15_000_000_000), max: new BN(20_000_000_000) },
     },
     tokenSupplyConfig: {
       range: { min: new BN(1_000_000_000), max: new BN(1_000_000_000) },
     },
     tokenDecimalsConfig: { range: { min: 6, max: 6 } },
+
+    initial_virtual_token_reserves_config: TEST_INITIAL_VIRTUAL_TOKEN_RESERVES,
+    initial_virtual_sol_reserves_config: TEST_INITIAL_VIRTUAL_SOL_RESERVES,
+    initial_real_token_reserves_config: TEST_INITIAL_REAL_TOKEN_RESERVES,
   };
 
   const tx = await createConfigTx(

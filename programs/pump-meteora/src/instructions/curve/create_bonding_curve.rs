@@ -1,7 +1,7 @@
 use std::ops::{Div, Mul};
 
 use crate::{
-    constants::{BONDING_CURVE, CONFIG, GLOBAL, METADATA},
+    constants::{BONDING_CURVE, CONFIG, GLOBAL, METADATA, TEST_INITIAL_VIRTUAL_TOKEN_RESERVES,TEST_INITIAL_VIRTUAL_SOL_RESERVES, TEST_INITIAL_REAL_TOKEN_RESERVES},
     errors::*,
     events::LaunchEvent,
     state::{bondingcurve::*, config::*},
@@ -158,18 +158,41 @@ impl<'info> CreateBondingCurve<'info> {
 
         global_config.token_decimals_config.validate(&decimals)?;
 
-        let init_bonding_curve = (token_supply as f64)
-            .mul(global_config.init_bonding_curve)
-            .div(100_f64) as u64;
+        // let init_bonding_curve = (token_supply as f64)
+        //     .mul(global_config.init_bonding_curve)
+        //     .div(100_f64) as u64;
 
-        let amount_to_team = token_supply - init_bonding_curve;
+        // let amount_to_team = token_supply - init_bonding_curve;
+
+        msg!("{:?},",  global_config.initial_virtual_sol_reserves_config);
 
         // create token launch pda
         bonding_curve.token_mint = token.key();
         bonding_curve.creator = creator.key();
         bonding_curve.init_lamport = reserve_lamport;
-        bonding_curve.reserve_lamport = reserve_lamport;
-        bonding_curve.reserve_token = init_bonding_curve;
+        // bonding_curve.reserve_lamport = reserve_lamport;
+        // bonding_curve.reserve_token = global_config.initial_real_token_reserves_config;
+
+        bonding_curve.virtual_sol_reserves = TEST_INITIAL_VIRTUAL_SOL_RESERVES;
+        bonding_curve.virtual_token_reserves = TEST_INITIAL_VIRTUAL_TOKEN_RESERVES;
+        bonding_curve.real_sol_reserves = 0;
+        bonding_curve.real_token_reserves = TEST_INITIAL_REAL_TOKEN_RESERVES;
+
+        msg!("global_config.initial_real_token_reserves_config {}",global_config.initial_real_token_reserves_config);
+        let init_bonding_curve = TEST_INITIAL_REAL_TOKEN_RESERVES;
+        let amount_to_team = token_supply - init_bonding_curve;
+
+        msg!("init_bonding_curve: {}, amount_to_team: {}",init_bonding_curve,amount_to_team);
+        msg!(
+            "bonding_curve.virtual_sol_reserves {:?},
+             bonding_curve.virtual_token_reserves {:?},
+             bonding_curve.real_sol_reserves {:?},
+             bonding_curve.real_token_reserves {:?}",
+             bonding_curve.virtual_sol_reserves,
+             bonding_curve.virtual_token_reserves,
+             bonding_curve.real_sol_reserves,
+             bonding_curve.real_token_reserves
+        );
 
         // create global token account
         associated_token::create(CpiContext::new(

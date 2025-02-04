@@ -1,15 +1,15 @@
-[toolchain]
 
+[toolchain]
 [features]
 resolution = true
 skip-lint = false
 
 [programs.devnet]
-usafun = "BV2E87QUHWrN7gd8Wiy8jZqMdGxZFJidguZykwgD6Br4"
+pump_meteora = "DF2fAvusPrSoeKhJKD9c5JzLE1qRudVSxZJeZxQYcTbq"
 
 
 [programs.localnet]
-pump_meteora = "CVMyXKzZqFpnKgxsy4c62Cn1BxZvwGdyDtJTdE51vj9y"
+pump_meteora = "DF2fAvusPrSoeKhJKD9c5JzLE1qRudVSxZJeZxQYcTbq"
 
 [registry]
 url = "https://api.apr.dev"

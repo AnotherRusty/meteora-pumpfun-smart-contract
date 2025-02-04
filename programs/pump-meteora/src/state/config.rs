@@ -23,6 +23,10 @@ pub struct Config {
     pub token_supply_config: AmountConfig<u64>,
     pub token_decimals_config: AmountConfig<u8>,
 
+    pub initial_virtual_token_reserves_config: u64,
+    pub initial_virtual_sol_reserves_config: u64,
+    pub initial_real_token_reserves_config: u64,
+
     pub initialized: bool,
     pub global_authority: Pubkey, // can update settings
 

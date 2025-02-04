@@ -12,7 +12,7 @@ use instructions::{
 use anchor_lang::prelude::*;
 use state::config::*;
 
-declare_id!("CVMyXKzZqFpnKgxsy4c62Cn1BxZvwGdyDtJTdE51vj9y");
+declare_id!("DF2fAvusPrSoeKhJKD9c5JzLE1qRudVSxZJeZxQYcTbq");
 
 #[program]
 pub mod pump_meteora {

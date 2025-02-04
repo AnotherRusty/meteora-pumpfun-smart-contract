@@ -60,6 +60,7 @@ impl<'info> Configure<'info> {
         let serialized_config_len = serialized_config.len();
         let config_cost = Rent::get()?.minimum_balance(serialized_config_len);
 
+        msg!("Configure: init config pda start");
         //  init config pda
         if self.config.owner != &crate::ID {
             let cpi_context = CpiContext::new(
@@ -69,7 +70,7 @@ impl<'info> Configure<'info> {
                     to: self.config.to_account_info(),
                 },
             );
-
+            msg!("Configure: create_account start");
             system_program::create_account(
                 cpi_context.with_signer(&[&[CONFIG.as_bytes(), &[config_bump]]]),
                 config_cost,
@@ -87,7 +88,7 @@ impl<'info> Configure<'info> {
                 return err!(ContractError::IncorrectAuthority);
             }
         }
-
+        msg!("Configure: init config pda end");
         let lamport_delta = (config_cost as i64) - (self.config.lamports() as i64);
         if lamport_delta > 0 {
             system_program::transfer(

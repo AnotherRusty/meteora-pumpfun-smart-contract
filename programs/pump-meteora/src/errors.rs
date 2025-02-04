@@ -57,4 +57,16 @@ pub enum ContractError {
 
     #[msg("IncorrectLaunchPhase")]
     IncorrectLaunchPhase,
+
+    #[msg("Not enough tokens to complete the sell order.")]
+    InsufficientTokens,
+    
+    #[msg("Not enough SOL received to be valid.")]
+    InsufficientSol,
+
+    #[msg("Sell Failed")]
+    SellFailed,
+
+    #[msg("Buy Failed")]
+    BuyFailed,
 }

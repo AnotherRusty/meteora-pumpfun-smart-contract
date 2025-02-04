@@ -181,8 +181,8 @@ pub fn handler(&mut self, amount: u64, direction: u8, minimum_receive_amount: u6
             minimum_receive_amount,
             amount_out,
 
-            reserve_lamport: bonding_curve.reserve_lamport,
-            reserve_token: bonding_curve.reserve_token
+            virtual_sol_reserves: bonding_curve.virtual_sol_reserves,
+            virtual_token_reserves: bonding_curve.virtual_token_reserves
         }
     );
     

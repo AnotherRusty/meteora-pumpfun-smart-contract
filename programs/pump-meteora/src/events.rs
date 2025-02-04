@@ -25,8 +25,8 @@ pub struct SwapEvent {
     pub minimum_receive_amount: u64,
     pub amount_out: u64,
 
-    pub reserve_lamport: u64,
-    pub reserve_token: u64,
+    pub virtual_sol_reserves: u64,
+    pub virtual_token_reserves: u64,
 }
 
 #[event]
