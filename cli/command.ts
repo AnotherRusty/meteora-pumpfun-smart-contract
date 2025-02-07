@@ -5,7 +5,9 @@ import {
   createBondingCurve,
   setClusterConfig,
   swap,
-  migrate,
+  initMigrationTx,
+  getCurrentPrice,
+  calculateSwap,
 } from "./scripts";
 
 
@@ -18,7 +20,7 @@ programCommand('migrate')
         const { env, keypair, rpc, mint } = cmd.opts();
 
         await setClusterConfig(env, keypair, rpc)
-        const migrateTxId = await migrate(mint);
+        const migrateTxId = await initMigrationTx(mint);
         console.log("Transaction ID: ", migrateTxId);
     });
 
@@ -99,13 +101,36 @@ function programCommand(name: string) {
     );
 }
 
+ programCommand('getCurrentPrice')
+  .requiredOption('-m, --mint <string>', 'Token mint address')
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  .action(async (directory, cmd) => {
+      const { env, keypair, rpc, mint } = cmd.opts();
+
+      await setClusterConfig(env, keypair, rpc)
+      const currentPrice = await getCurrentPrice(mint);
+  });
+
+  programCommand('calculateSwap')
+  .requiredOption("-a, --amount <number>", "swap amount")
+  .requiredOption('-m, --mint <string>', 'Token mint address')
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  .action(async (directory, cmd) => {
+      const { env, keypair, rpc, amount, mint } = cmd.opts();
+
+      await setClusterConfig(env, keypair, rpc)
+      const tokenOutAmount = await calculateSwap(mint, amount);
+  });
+
 program.parse(process.argv);
 
 /*
 
   yarn script config
   yarn script curve     //catch token_address
-  yarn script swap -t 5As2Cv3iMKGn5JGjtJfwKrJRJ5Gfd56YfDa6RSRX7dZ5 -a 2000000000 -s 0
-  yarn script migrate -m 5As2Cv3iMKGn5JGjtJfwKrJRJ5Gfd56YfDa6RSRX7dZ5
-
+  yarn script getCurrentPrice -m ES9SQWshCDRcJyEzxMLksqy8TDWjrYxaR46L7w9nEQQ8
+  yarn script calculateSwap -m ES9SQWshCDRcJyEzxMLksqy8TDWjrYxaR46L7w9nEQQ8 -a 2000
+  yarn script swap -t ES9SQWshCDRcJyEzxMLksqy8TDWjrYxaR46L7w9nEQQ8 -a 2000000000 -s 0
+  yarn script migrate -m ES9SQWshCDRcJyEzxMLksqy8TDWjrYxaR46L7w9nEQQ8
+  
 */

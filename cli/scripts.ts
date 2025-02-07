@@ -130,6 +130,8 @@ export const configProject = async () => {
   await execTx(tx, solConnection, payer);
 };
 
+
+
 export const createBondingCurve = async () => {
   const tx = await createBondingCurveTx(
     TEST_DECIMALS,
@@ -171,7 +173,7 @@ export const swap = async (
 export const FEE_RECEIVER = publicKey("3bM4hewuZFZgNXvLWwaktXMa8YHgxsnnhaRfzxJV944P");
 export const METEORA_CONFIG = publicKey("BdfD7rrTZEWmf8UbEBPVpvM3wUqyrR8swjAy5SNT8gJ2");
 
-export const migrate = async (mint: string) => {
+export const initMigrationTx = async (mint: string) => {
   const { ammProgram, vaultProgram } = createProgram(provider.connection, null);
   const eventAuthority = PublicKey.findProgramAddressSync([Buffer.from("__event_authority")], new PublicKey(PROGRAM_ID))[0];
 
@@ -479,6 +481,92 @@ export const migrate = async (mint: string) => {
   console.log('lockPoolConfirm', lockPoolConfirm)
 
   return lockPoolId;
+}
+
+const calcPrice = (
+  virtualTokenReserves: BN,
+  virtualSolReserves: BN
+): number => {
+  if (virtualSolReserves.isZero()) {
+    throw new Error("Division by zero: virtualSolReserves is zero.");
+  }
+
+  return virtualSolReserves.toNumber() / virtualTokenReserves.toNumber() / 1000;
+};
+
+export const getCurrentPrice = async (mint: string) =>{
+  const tokenBMint = new PublicKey(mint);
+  const bondingCurvePda = PublicKey.findProgramAddressSync([Buffer.from(SEED_BONDING_CURVE), tokenBMint.toBytes()], program.programId)[0];
+  const bondingCurve = await program.account.bondingCurve.fetch(bondingCurvePda);
+  const curveData = {
+    virtualSolReserves: bondingCurve.virtualSolReserves,
+    virtualTokenReserves: bondingCurve.virtualTokenReserves,
+    realSolReserves: bondingCurve.realSolReserves,
+    realTokenReserves: bondingCurve.realTokenReserves,
+  };
+  console.log(curveData);
+  const currentPrice = calcPrice(curveData.virtualTokenReserves, curveData.virtualSolReserves);
+  console.log("Current Price:", currentPrice);
+  return currentPrice;
+}
+
+const SCALE_UP = new BN(1_000_000_000);  // Scale tokens to 9 decimals
+const SCALE_DOWN = new BN(1_000_000);    // Convert back to 6 decimals
+
+const calculateTokensOut = (
+  virtualSolReserves: BN,
+  virtualTokenReserves: BN,
+  solAmount: BN
+): BN | null => {
+  // Convert token reserves to 9 decimal places
+  const currentSol = virtualSolReserves;
+  const currentTokens = virtualTokenReserves.mul(SCALE_UP).div(SCALE_DOWN);
+
+  if (currentTokens.isZero()) return null; // Avoid division by zero
+
+  // Calculate new reserves using constant product formula
+  const newSol = currentSol.add(solAmount);
+  const newTokens = currentSol.mul(currentTokens).div(newSol);
+
+  // Tokens to be received
+  let tokensOut = currentTokens.sub(newTokens);
+
+  // Convert back to 6 decimal places
+  tokensOut = tokensOut.mul(SCALE_DOWN).div(SCALE_UP);
+
+  return tokensOut;
+};
+
+const solAmountToBN = (solAmount: number): BN => {
+  return new BN(solAmount); // Scale to 9 decimals
+};
+
+export const calculateSwap = async (mint: string, solAmount: number) =>{
+  if (solAmount == 0) {
+    return null;
+  }
+  const tokenBMint = new PublicKey(mint);
+  const bondingCurvePda = PublicKey.findProgramAddressSync([Buffer.from(SEED_BONDING_CURVE), tokenBMint.toBytes()], program.programId)[0];
+  const bondingCurve = await program.account.bondingCurve.fetch(bondingCurvePda);
+  const curveData = {
+    virtualSolReserves: bondingCurve.virtualSolReserves,
+    virtualTokenReserves: bondingCurve.virtualTokenReserves,
+    realSolReserves: bondingCurve.realSolReserves,
+    realTokenReserves: bondingCurve.realTokenReserves,
+  };
+  console.log(curveData);
+
+  solAmount -= solAmount * 0.0069; // Decrease by 0.69%
+  console.log("Updated SOL Amount:", solAmount);
+  const solAmountBN = solAmountToBN(solAmount);
+  console.log(solAmountBN.toString());
+  let tokensOut = calculateTokensOut(curveData.virtualSolReserves, curveData.virtualTokenReserves, solAmountBN);
+  
+  if (tokensOut >= curveData.realTokenReserves){
+    console.log("realTokenReserves limit:", tokensOut?.toString(), curveData.realTokenReserves.toString());
+    tokensOut = curveData.realTokenReserves;
+  }
+  console.log("Tokens Out:", tokensOut?.toString());
 }
 
 function sleep(ms: number): Promise<void> {
