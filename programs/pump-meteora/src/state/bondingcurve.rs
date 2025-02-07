@@ -19,6 +19,7 @@ pub struct BondingCurve {
 
     // pub reserve_lamport: u64,
     // pub reserve_token: u64,
+    pub token_total_supply: u64,
 
     pub virtual_sol_reserves: u64,
     pub virtual_token_reserves: u64,

@@ -69,4 +69,22 @@ pub enum ContractError {
 
     #[msg("Buy Failed")]
     BuyFailed,
+
+    #[msg("This token is not a bonding curve token")]
+    NotBondingCurveMint,
+
+    #[msg("Not quote mint")]
+    NotSOL,
+
+    #[msg("Invalid Migration Authority")]
+    InvalidMigrationAuthority,
+
+    #[msg("Bonding curve is not completed")]
+    NotCompleted,
+
+    #[msg("Invalid Meteora Program")]
+    InvalidMeteoraProgram,
+
+    #[msg("Arithmetic Error")]
+    ArithmeticError,
 }

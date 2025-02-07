@@ -5,9 +5,22 @@ import {
   createBondingCurve,
   setClusterConfig,
   swap,
+  migrate,
 } from "./scripts";
 
+
 program.version("0.0.1");
+
+programCommand('migrate')
+    .requiredOption('-m, --mint <string>', 'Token mint address')
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    .action(async (directory, cmd) => {
+        const { env, keypair, rpc, mint } = cmd.opts();
+
+        await setClusterConfig(env, keypair, rpc)
+        const migrateTxId = await migrate(mint);
+        console.log("Transaction ID: ", migrateTxId);
+    });
 
 programCommand("config").action(async (directory, cmd) => {
   const { env, keypair, rpc } = cmd.opts();
@@ -77,7 +90,7 @@ function programCommand(name: string) {
     .option(
       "-r, --rpc <string>",
       "Solana cluster RPC name",
-      "https://devnet.helius-rpc.com/?api-key=facb2b5c-c0d2-44b1-8538-986b895bf122"
+      "https://api.devnet.solana.com"//"https://devnet.helius-rpc.com/?api-key=facb2b5c-c0d2-44b1-8538-986b895bf122"
     )
     .option(
       "-k, --keypair <string>",
@@ -92,6 +105,7 @@ program.parse(process.argv);
 
   yarn script config
   yarn script curve     //catch token_address
-  yarn script swap -t BstvSKkKPjowbd9CycqPP8khVFM7W3sxxvsF2psqkcTq -a 2000000000 -s 0
+  yarn script swap -t 5As2Cv3iMKGn5JGjtJfwKrJRJ5Gfd56YfDa6RSRX7dZ5 -a 2000000000 -s 0
+  yarn script migrate -m 5As2Cv3iMKGn5JGjtJfwKrJRJ5Gfd56YfDa6RSRX7dZ5
 
 */

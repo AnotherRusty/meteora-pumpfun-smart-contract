@@ -177,12 +177,13 @@ impl<'info> CreateBondingCurve<'info> {
         bonding_curve.virtual_token_reserves = TEST_INITIAL_VIRTUAL_TOKEN_RESERVES;
         bonding_curve.real_sol_reserves = 0;
         bonding_curve.real_token_reserves = TEST_INITIAL_REAL_TOKEN_RESERVES;
+        bonding_curve.token_total_supply = token_supply;
 
         msg!("global_config.initial_real_token_reserves_config {}",global_config.initial_real_token_reserves_config);
-        let init_bonding_curve = TEST_INITIAL_REAL_TOKEN_RESERVES;
-        let amount_to_team = token_supply - init_bonding_curve;
+        // let init_bonding_curve = TEST_INITIAL_REAL_TOKEN_RESERVES;
+        // let amount_to_team = token_supply - init_bonding_curve;
 
-        msg!("init_bonding_curve: {}, amount_to_team: {}",init_bonding_curve,amount_to_team);
+        // msg!("init_bonding_curve: {}, amount_to_team: {}",init_bonding_curve,amount_to_team);
         msg!(
             "bonding_curve.virtual_sol_reserves {:?},
              bonding_curve.virtual_token_reserves {:?},
@@ -207,18 +208,18 @@ impl<'info> CreateBondingCurve<'info> {
             },
         ))?;
         // create team token account
-        anchor_spl::associated_token::create(CpiContext::new(
-            self.associated_token_program.to_account_info(),
-            anchor_spl::associated_token::Create {
-                payer: creator.to_account_info(),
-                associated_token: team_wallet_ata.to_account_info(),
-                authority: team_wallet.to_account_info(),
+        // anchor_spl::associated_token::create(CpiContext::new(
+        //     self.associated_token_program.to_account_info(),
+        //     anchor_spl::associated_token::Create {
+        //         payer: creator.to_account_info(),
+        //         associated_token: team_wallet_ata.to_account_info(),
+        //         authority: team_wallet.to_account_info(),
 
-                mint: token.to_account_info(),
-                system_program: self.system_program.to_account_info(),
-                token_program: self.token_program.to_account_info(),
-            },
-        ))?;
+        //         mint: token.to_account_info(),
+        //         system_program: self.system_program.to_account_info(),
+        //         token_program: self.token_program.to_account_info(),
+        //     },
+        // ))?;
         let signer_seeds: &[&[&[u8]]] = &[&[GLOBAL.as_bytes(), &[global_vault_bump]]];
 
         // mint tokens to bonding curve & team
@@ -232,20 +233,20 @@ impl<'info> CreateBondingCurve<'info> {
                 },
                 signer_seeds,
             ),
-            init_bonding_curve,
+            token_supply,
         )?;
-        token::mint_to(
-            CpiContext::new_with_signer(
-                self.token_program.to_account_info(),
-                token::MintTo {
-                    mint: token.to_account_info(),
-                    to: team_wallet_ata.to_account_info(),
-                    authority: global_vault.to_account_info(),
-                },
-                signer_seeds,
-            ),
-            amount_to_team,
-        )?;
+        // token::mint_to(
+        //     CpiContext::new_with_signer(
+        //         self.token_program.to_account_info(),
+        //         token::MintTo {
+        //             mint: token.to_account_info(),
+        //             to: team_wallet_ata.to_account_info(),
+        //             authority: global_vault.to_account_info(),
+        //         },
+        //         signer_seeds,
+        //     ),
+        //     amount_to_team,
+        // )?;
 
         // create metadata
         metadata::create_metadata_accounts_v3(
@@ -301,7 +302,7 @@ impl<'info> CreateBondingCurve<'info> {
             decimals,
             token_supply,
             reserve_lamport,
-            reserve_token: init_bonding_curve
+            reserve_token: TEST_INITIAL_REAL_TOKEN_RESERVES
         });
 
         Ok(())

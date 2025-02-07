@@ -6,13 +6,11 @@ pub mod instructions;
 pub mod state;
 pub mod utils;
 
-use instructions::{
-    configure::*, create_bonding_curve::*, swap::*,
-};
 use anchor_lang::prelude::*;
+use instructions::{configure::*, create_bonding_curve::*, create_pool::*, lock_pool::*, swap::*};
 use state::config::*;
 
-declare_id!("DF2fAvusPrSoeKhJKD9c5JzLE1qRudVSxZJeZxQYcTbq");
+declare_id!("G38sN4owkSLDunjcXD66bGLqWEDsCP6cvc5SS6ruSG2j");
 
 #[program]
 pub mod pump_meteora {
@@ -63,6 +61,15 @@ pub mod pump_meteora {
             minimum_receive_amount,
             ctx.bumps.global_vault,
         )
+    }
+
+    pub fn create_pool(ctx: Context<InitializePoolWithConfig>) -> Result<()> {
+        msg!("create_pool start");
+        instructions::initialize_pool_with_config(ctx)
+    }
+
+    pub fn lock_pool(ctx: Context<LockPool>) -> Result<()> {
+        instructions::lock_pool(ctx)
     }
 }
 

@@ -5,11 +5,11 @@ resolution = true
 skip-lint = false
 
 [programs.devnet]
-pump_meteora = "DF2fAvusPrSoeKhJKD9c5JzLE1qRudVSxZJeZxQYcTbq"
+pump_meteora = "G38sN4owkSLDunjcXD66bGLqWEDsCP6cvc5SS6ruSG2j"
 
 
 [programs.localnet]
-pump_meteora = "DF2fAvusPrSoeKhJKD9c5JzLE1qRudVSxZJeZxQYcTbq"
+pump_meteora = "G38sN4owkSLDunjcXD66bGLqWEDsCP6cvc5SS6ruSG2j"
 
 [registry]
 url = "https://api.apr.dev"

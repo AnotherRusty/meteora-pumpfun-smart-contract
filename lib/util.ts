@@ -12,6 +12,20 @@ import {
 
 import { ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import NodeWallet from "@coral-xyz/anchor/dist/cjs/nodewallet";
+import { Program, Wallet, AnchorProvider } from "@coral-xyz/anchor";
+
+
+import {
+    IDL as VaultIDL,
+    VaultIdl,
+    PROGRAM_ID as VAULT_PROGRAM_ID,
+  } from '@mercurial-finance/vault-sdk';
+
+import {
+    AmmIdl,
+    Amm,
+    PROGRAM_ID as AMM_PROGRAM_ID
+  } from '@mercurial-finance/dynamic-amm-sdk';
 
 export const getAssociatedTokenAccount = (
     ownerPubkey: PublicKey,
