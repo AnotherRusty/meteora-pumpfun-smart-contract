@@ -159,7 +159,7 @@ pub struct InitializePoolWithConfig<'info> {
 pub fn initialize_pool_with_config(ctx: Context<InitializePoolWithConfig>) -> Result<()> {
     let quote_mint: Pubkey = Pubkey::from_str(QUOTE_MINT).unwrap();
 
-    msg!("initialize_pool_with_config start");
+    // msg!("initialize_pool_with_config start");
 
     require!(
         ctx.accounts.bonding_curve.token_mint.key() == ctx.accounts.token_b_mint.key(),
@@ -181,9 +181,8 @@ pub fn initialize_pool_with_config(ctx: Context<InitializePoolWithConfig>) -> Re
         ContractError::InvalidMeteoraProgram
     );
 
-
-    msg!("current real_sol_reserves: {}", ctx.accounts.bonding_curve.real_sol_reserves);
-    msg!("current real_token_reserves: {}", ctx.accounts.bonding_curve.real_token_reserves);
+    // msg!("current real_sol_reserves: {}", ctx.accounts.bonding_curve.real_sol_reserves);
+    // msg!("current real_token_reserves: {}", ctx.accounts.bonding_curve.real_token_reserves);
    
     let token_a_amount = ctx
         .accounts
@@ -194,11 +193,11 @@ pub fn initialize_pool_with_config(ctx: Context<InitializePoolWithConfig>) -> Re
         .checked_sub(40_000_000)
         .ok_or(ContractError::ArithmeticError)?;
 
-    msg!("Token A Amount: {}", token_a_amount);
+    // msg!("Token A Amount: {}", token_a_amount);
 
     let token_b_amount = TEST_INITIAL_METEORA_TOKEN_RESERVES;
 
-    msg!("Token B Amount: {}", token_b_amount);
+    // msg!("Token B Amount: {}", token_b_amount);
 
     let signer_seeds: &[&[&[u8]]] = &[&[
         GLOBAL.as_bytes(),

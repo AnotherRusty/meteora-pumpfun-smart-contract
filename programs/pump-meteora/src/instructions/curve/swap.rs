@@ -26,20 +26,6 @@ pub struct Swap<'info> {
     )]
     pub team_wallet: AccountInfo<'info>,
 
-    /// CHECK: ata of team wallet
-    #[account(
-        mut,
-        seeds = [
-            team_wallet.key().as_ref(),
-            anchor_spl::token::spl_token::ID.as_ref(),
-            token_mint.key().as_ref(),
-        ],
-        bump,
-        seeds::program = anchor_spl::associated_token::ID
-    )]
-    team_wallet_ata: AccountInfo<'info>,
-
-
     #[account(
         mut,
         seeds = [BONDING_CURVE.as_bytes(), &token_mint.key().to_bytes()], 
@@ -110,7 +96,6 @@ pub fn handler(&mut self, amount: u64, direction: u8, minimum_receive_amount: u6
 
     let token = &mut self.token_mint;
     let team_wallet = &mut self.team_wallet;
-    let team_wallet_ata = &mut self.team_wallet_ata;
     let user_ata = &mut self.user_ata;
 
     //  create user wallet ata, if it doean't exit
@@ -121,22 +106,6 @@ pub fn handler(&mut self, amount: u64, direction: u8, minimum_receive_amount: u6
                 payer: self.user.to_account_info(),
                 associated_token: user_ata.to_account_info(),
                 authority: self.user.to_account_info(),
-
-                mint: token.to_account_info(),
-                system_program: self.system_program.to_account_info(),
-                token_program: self.token_program.to_account_info(),
-            }
-        ))?;
-    }
-
-    //  create team wallet ata, if it doesn't exist
-    if team_wallet_ata.data_is_empty() {
-        anchor_spl::associated_token::create(CpiContext::new(
-            self.associated_token_program.to_account_info(),
-            anchor_spl::associated_token::Create {
-                payer: self.user.to_account_info(),
-                associated_token: team_wallet_ata.to_account_info(),
-                authority: team_wallet.to_account_info(),
 
                 mint: token.to_account_info(),
                 system_program: self.system_program.to_account_info(),
@@ -158,7 +127,6 @@ pub fn handler(&mut self, amount: u64, direction: u8, minimum_receive_amount: u6
         user_ata,
         source,
         team_wallet,
-        team_wallet_ata,
         amount,
         direction,
         minimum_receive_amount,

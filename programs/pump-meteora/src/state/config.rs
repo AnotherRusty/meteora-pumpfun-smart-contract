@@ -2,7 +2,6 @@ use crate::errors::*;
 use anchor_lang::{prelude::*, AnchorDeserialize, AnchorSerialize};
 use core::fmt::Debug;
 
-
 #[account]
 pub struct Config {
     pub authority: Pubkey,
@@ -29,9 +28,7 @@ pub struct Config {
 
     pub initialized: bool,
     pub global_authority: Pubkey, // can update settings
-
 }
-
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Eq, Debug)]
 pub enum AmountConfig<T: PartialEq + PartialOrd + Debug> {
@@ -45,13 +42,13 @@ impl<T: PartialEq + PartialOrd + Debug> AmountConfig<T> {
             Self::Range { min, max } => {
                 if let Some(min) = min {
                     if value < min {
-                        msg!("value {value:?} too small, expected at least {min:?}");
+                        // msg!("value {value:?} too small, expected at least {min:?}");
                         return Err(ValueTooSmall.into());
                     }
                 }
                 if let Some(max) = max {
                     if value > max {
-                        msg!("value {value:?} too large, expected at most {max:?}");
+                        // msg!("value {value:?} too large, expected at most {max:?}");
                         return Err(ValueTooLarge.into());
                     }
                 }
@@ -62,7 +59,7 @@ impl<T: PartialEq + PartialOrd + Debug> AmountConfig<T> {
                 if options.contains(value) {
                     Ok(())
                 } else {
-                    msg!("invalid value {value:?}, expected one of: {options:?}");
+                    // msg!("invalid value {value:?}, expected one of: {options:?}");
                     Err(ValueInvalid.into())
                 }
             }

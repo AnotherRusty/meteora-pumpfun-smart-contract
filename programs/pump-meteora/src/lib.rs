@@ -6,20 +6,14 @@ pub mod instructions;
 pub mod state;
 pub mod utils;
 
-use anchor_lang::prelude::*;
 use instructions::{configure::*, create_bonding_curve::*, create_pool::*, lock_pool::*, swap::*};
 use state::config::*;
 
-declare_id!("G38sN4owkSLDunjcXD66bGLqWEDsCP6cvc5SS6ruSG2j");
+declare_id!("w7LSvr1Y4DW9xTTdCMdxAGaFTXti2xEu1ykEUeXhTRx");
 
 #[program]
 pub mod pump_meteora {
     use super::*;
-
-    pub fn initialize(ctx: Context<Initialize>) -> Result<()> {
-        msg!("Greetings from: {:?}", ctx.program_id);
-        Ok(())
-    }
 
     pub fn configure(ctx: Context<Configure>, new_config: Config) -> Result<()> {
         ctx.accounts.handler(new_config, ctx.bumps.config)
@@ -64,7 +58,6 @@ pub mod pump_meteora {
     }
 
     pub fn create_pool(ctx: Context<InitializePoolWithConfig>) -> Result<()> {
-        msg!("create_pool start");
         instructions::initialize_pool_with_config(ctx)
     }
 

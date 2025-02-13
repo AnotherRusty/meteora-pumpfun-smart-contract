@@ -1,13 +1,7 @@
-/**
- * Program IDL in camelCase format in order to be used in JS/TS.
- *
- * Note that this is only a type helper and is not the actual IDL. The original
- * IDL can be found at `target/idl/pump_meteora.json`.
- */
-export type PumpMeteora = {
+{
   "address": "w7LSvr1Y4DW9xTTdCMdxAGaFTXti2xEu1ykEUeXhTRx",
   "metadata": {
-    "name": "pumpMeteora",
+    "name": "pump_meteora",
     "version": "0.1.0",
     "spec": "0.1.0",
     "description": "Created with Anchor"
@@ -51,7 +45,7 @@ export type PumpMeteora = {
           }
         },
         {
-          "name": "globalVault",
+          "name": "global_vault",
           "writable": true,
           "pda": {
             "seeds": [
@@ -70,13 +64,13 @@ export type PumpMeteora = {
           }
         },
         {
-          "name": "globalWsolAccount",
+          "name": "global_wsol_account",
           "writable": true,
           "pda": {
             "seeds": [
               {
                 "kind": "account",
-                "path": "globalVault"
+                "path": "global_vault"
               },
               {
                 "kind": "const",
@@ -117,7 +111,7 @@ export type PumpMeteora = {
               },
               {
                 "kind": "account",
-                "path": "nativeMint"
+                "path": "native_mint"
               }
             ],
             "program": {
@@ -160,35 +154,35 @@ export type PumpMeteora = {
           }
         },
         {
-          "name": "nativeMint",
+          "name": "native_mint",
           "address": "So11111111111111111111111111111111111111112"
         },
         {
-          "name": "systemProgram",
+          "name": "system_program",
           "address": "11111111111111111111111111111111"
         },
         {
-          "name": "tokenProgram",
+          "name": "token_program",
           "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
         },
         {
-          "name": "associatedTokenProgram",
+          "name": "associated_token_program",
           "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
         }
       ],
       "args": [
         {
-          "name": "newConfig",
+          "name": "new_config",
           "type": {
             "defined": {
-              "name": "config"
+              "name": "Config"
             }
           }
         }
       ]
     },
     {
-      "name": "createBondingCurve",
+      "name": "create_bonding_curve",
       "discriminator": [
         94,
         139,
@@ -201,7 +195,7 @@ export type PumpMeteora = {
       ],
       "accounts": [
         {
-          "name": "globalConfig",
+          "name": "global_config",
           "writable": true,
           "pda": {
             "seeds": [
@@ -220,7 +214,7 @@ export type PumpMeteora = {
           }
         },
         {
-          "name": "globalVault",
+          "name": "global_vault",
           "writable": true,
           "pda": {
             "seeds": [
@@ -249,7 +243,7 @@ export type PumpMeteora = {
           "signer": true
         },
         {
-          "name": "bondingCurve",
+          "name": "bonding_curve",
           "writable": true,
           "pda": {
             "seeds": [
@@ -279,7 +273,7 @@ export type PumpMeteora = {
           }
         },
         {
-          "name": "tokenMetadataAccount",
+          "name": "token_metadata_account",
           "writable": true,
           "pda": {
             "seeds": [
@@ -378,13 +372,13 @@ export type PumpMeteora = {
           }
         },
         {
-          "name": "globalTokenAccount",
+          "name": "global_token_account",
           "writable": true,
           "pda": {
             "seeds": [
               {
                 "kind": "account",
-                "path": "globalVault"
+                "path": "global_vault"
               },
               {
                 "kind": "const",
@@ -468,7 +462,7 @@ export type PumpMeteora = {
           }
         },
         {
-          "name": "systemProgram",
+          "name": "system_program",
           "address": "11111111111111111111111111111111"
         },
         {
@@ -476,19 +470,19 @@ export type PumpMeteora = {
           "address": "SysvarRent111111111111111111111111111111111"
         },
         {
-          "name": "tokenProgram",
+          "name": "token_program",
           "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
         },
         {
-          "name": "associatedTokenProgram",
+          "name": "associated_token_program",
           "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
         },
         {
-          "name": "mplTokenMetadataProgram",
+          "name": "mpl_token_metadata_program",
           "address": "metaqbxxUerdq28cj1RbAWkYQm3ybzjb6a8bt518x1s"
         },
         {
-          "name": "teamWallet",
+          "name": "team_wallet",
           "writable": true
         }
       ],
@@ -498,11 +492,11 @@ export type PumpMeteora = {
           "type": "u8"
         },
         {
-          "name": "tokenSupply",
+          "name": "token_supply",
           "type": "u64"
         },
         {
-          "name": "virtualLamportReserves",
+          "name": "virtual_lamport_reserves",
           "type": "u64"
         },
         {
@@ -520,7 +514,7 @@ export type PumpMeteora = {
       ]
     },
     {
-      "name": "createPool",
+      "name": "create_pool",
       "discriminator": [
         233,
         146,
@@ -533,7 +527,7 @@ export type PumpMeteora = {
       ],
       "accounts": [
         {
-          "name": "globalConfig",
+          "name": "global_config",
           "pda": {
             "seeds": [
               {
@@ -551,14 +545,14 @@ export type PumpMeteora = {
           }
         },
         {
-          "name": "teamWallet",
+          "name": "team_wallet",
           "writable": true
         },
         {
-          "name": "tokenMint"
+          "name": "token_mint"
         },
         {
-          "name": "bondingCurve",
+          "name": "bonding_curve",
           "writable": true,
           "pda": {
             "seeds": [
@@ -582,7 +576,7 @@ export type PumpMeteora = {
               },
               {
                 "kind": "account",
-                "path": "tokenMint"
+                "path": "token_mint"
               }
             ]
           }
@@ -595,34 +589,34 @@ export type PumpMeteora = {
           "name": "config"
         },
         {
-          "name": "lpMint",
+          "name": "lp_mint",
           "writable": true
         },
         {
-          "name": "aVaultLp",
+          "name": "a_vault_lp",
           "writable": true
         },
         {
-          "name": "bVaultLp",
+          "name": "b_vault_lp",
           "writable": true
         },
         {
-          "name": "tokenAMint"
+          "name": "token_a_mint"
         },
         {
-          "name": "tokenBMint",
+          "name": "token_b_mint",
           "writable": true
         },
         {
-          "name": "aVault",
+          "name": "a_vault",
           "writable": true
         },
         {
-          "name": "bVault",
+          "name": "b_vault",
           "writable": true
         },
         {
-          "name": "aTokenVault",
+          "name": "a_token_vault",
           "writable": true,
           "pda": {
             "seeds": [
@@ -644,17 +638,17 @@ export type PumpMeteora = {
               },
               {
                 "kind": "account",
-                "path": "aVault"
+                "path": "a_vault"
               }
             ],
             "program": {
               "kind": "account",
-              "path": "vaultProgram"
+              "path": "vault_program"
             }
           }
         },
         {
-          "name": "bTokenVault",
+          "name": "b_token_vault",
           "writable": true,
           "pda": {
             "seeds": [
@@ -676,25 +670,25 @@ export type PumpMeteora = {
               },
               {
                 "kind": "account",
-                "path": "bVault"
+                "path": "b_vault"
               }
             ],
             "program": {
               "kind": "account",
-              "path": "vaultProgram"
+              "path": "vault_program"
             }
           }
         },
         {
-          "name": "aVaultLpMint",
+          "name": "a_vault_lp_mint",
           "writable": true
         },
         {
-          "name": "bVaultLpMint",
+          "name": "b_vault_lp_mint",
           "writable": true
         },
         {
-          "name": "globalVault",
+          "name": "global_vault",
           "writable": true,
           "pda": {
             "seeds": [
@@ -713,13 +707,13 @@ export type PumpMeteora = {
           }
         },
         {
-          "name": "globalTokenAccount",
+          "name": "global_token_account",
           "writable": true,
           "pda": {
             "seeds": [
               {
                 "kind": "account",
-                "path": "globalVault"
+                "path": "global_vault"
               },
               {
                 "kind": "const",
@@ -760,7 +754,7 @@ export type PumpMeteora = {
               },
               {
                 "kind": "account",
-                "path": "tokenMint"
+                "path": "token_mint"
               }
             ],
             "program": {
@@ -803,23 +797,23 @@ export type PumpMeteora = {
           }
         },
         {
-          "name": "payerTokenA",
+          "name": "payer_token_a",
           "writable": true
         },
         {
-          "name": "payerTokenB",
+          "name": "payer_token_b",
           "writable": true
         },
         {
-          "name": "payerPoolLp",
+          "name": "payer_pool_lp",
           "writable": true
         },
         {
-          "name": "protocolTokenAFee",
+          "name": "protocol_token_a_fee",
           "writable": true
         },
         {
-          "name": "protocolTokenBFee",
+          "name": "protocol_token_b_fee",
           "writable": true
         },
         {
@@ -828,41 +822,41 @@ export type PumpMeteora = {
           "signer": true
         },
         {
-          "name": "mintMetadata",
+          "name": "mint_metadata",
           "writable": true
         },
         {
           "name": "rent"
         },
         {
-          "name": "metadataProgram"
+          "name": "metadata_program"
         },
         {
-          "name": "vaultProgram"
+          "name": "vault_program"
         },
         {
-          "name": "tokenProgram",
+          "name": "token_program",
           "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
         },
         {
-          "name": "associatedTokenProgram"
+          "name": "associated_token_program"
         },
         {
-          "name": "systemProgram",
+          "name": "system_program",
           "address": "11111111111111111111111111111111"
         },
         {
-          "name": "eventAuthority"
+          "name": "event_authority"
         },
         {
-          "name": "meteoraProgram",
+          "name": "meteora_program",
           "writable": true
         }
       ],
       "args": []
     },
     {
-      "name": "lockPool",
+      "name": "lock_pool",
       "discriminator": [
         154,
         202,
@@ -875,7 +869,7 @@ export type PumpMeteora = {
       ],
       "accounts": [
         {
-          "name": "bondingCurve",
+          "name": "bonding_curve",
           "writable": true,
           "pda": {
             "seeds": [
@@ -899,16 +893,16 @@ export type PumpMeteora = {
               },
               {
                 "kind": "account",
-                "path": "tokenMint"
+                "path": "token_mint"
               }
             ]
           }
         },
         {
-          "name": "tokenMint"
+          "name": "token_mint"
         },
         {
-          "name": "globalVault",
+          "name": "global_vault",
           "writable": true,
           "pda": {
             "seeds": [
@@ -931,38 +925,38 @@ export type PumpMeteora = {
           "writable": true
         },
         {
-          "name": "lpMint",
+          "name": "lp_mint",
           "writable": true
         },
         {
-          "name": "aVaultLp",
+          "name": "a_vault_lp",
           "writable": true
         },
         {
-          "name": "bVaultLp",
+          "name": "b_vault_lp",
           "writable": true
         },
         {
-          "name": "tokenBMint"
+          "name": "token_b_mint"
         },
         {
-          "name": "aVault",
+          "name": "a_vault",
           "writable": true
         },
         {
-          "name": "bVault",
+          "name": "b_vault",
           "writable": true
         },
         {
-          "name": "aVaultLpMint",
+          "name": "a_vault_lp_mint",
           "writable": true
         },
         {
-          "name": "bVaultLpMint",
+          "name": "b_vault_lp_mint",
           "writable": true
         },
         {
-          "name": "payerPoolLp",
+          "name": "payer_pool_lp",
           "writable": true
         },
         {
@@ -971,46 +965,46 @@ export type PumpMeteora = {
           "signer": true
         },
         {
-          "name": "feeReceiver",
+          "name": "fee_receiver",
           "writable": true
         },
         {
-          "name": "tokenProgram"
+          "name": "token_program"
         },
         {
-          "name": "associatedTokenProgram"
+          "name": "associated_token_program"
         },
         {
-          "name": "systemProgram"
+          "name": "system_program"
         },
         {
-          "name": "lockEscrow",
+          "name": "lock_escrow",
           "docs": [
             "CHECK lock escrow"
           ],
           "writable": true
         },
         {
-          "name": "lockEscrow1",
+          "name": "lock_escrow1",
           "docs": [
             "CHECK lock escrow"
           ],
           "writable": true
         },
         {
-          "name": "escrowVault",
+          "name": "escrow_vault",
           "writable": true
         },
         {
-          "name": "escrowVault1",
+          "name": "escrow_vault1",
           "writable": true
         },
         {
-          "name": "meteoraProgram",
+          "name": "meteora_program",
           "writable": true
         },
         {
-          "name": "eventAuthority"
+          "name": "event_authority"
         }
       ],
       "args": []
@@ -1029,7 +1023,7 @@ export type PumpMeteora = {
       ],
       "accounts": [
         {
-          "name": "globalConfig",
+          "name": "global_config",
           "pda": {
             "seeds": [
               {
@@ -1047,11 +1041,11 @@ export type PumpMeteora = {
           }
         },
         {
-          "name": "teamWallet",
+          "name": "team_wallet",
           "writable": true
         },
         {
-          "name": "bondingCurve",
+          "name": "bonding_curve",
           "writable": true,
           "pda": {
             "seeds": [
@@ -1075,13 +1069,13 @@ export type PumpMeteora = {
               },
               {
                 "kind": "account",
-                "path": "tokenMint"
+                "path": "token_mint"
               }
             ]
           }
         },
         {
-          "name": "globalVault",
+          "name": "global_vault",
           "writable": true,
           "pda": {
             "seeds": [
@@ -1100,16 +1094,16 @@ export type PumpMeteora = {
           }
         },
         {
-          "name": "tokenMint"
+          "name": "token_mint"
         },
         {
-          "name": "globalAta",
+          "name": "global_ata",
           "writable": true,
           "pda": {
             "seeds": [
               {
                 "kind": "account",
-                "path": "globalVault"
+                "path": "global_vault"
               },
               {
                 "kind": "const",
@@ -1150,7 +1144,7 @@ export type PumpMeteora = {
               },
               {
                 "kind": "account",
-                "path": "tokenMint"
+                "path": "token_mint"
               }
             ],
             "program": {
@@ -1193,7 +1187,7 @@ export type PumpMeteora = {
           }
         },
         {
-          "name": "userAta",
+          "name": "user_ata",
           "writable": true,
           "pda": {
             "seeds": [
@@ -1240,7 +1234,7 @@ export type PumpMeteora = {
               },
               {
                 "kind": "account",
-                "path": "tokenMint"
+                "path": "token_mint"
               }
             ],
             "program": {
@@ -1288,15 +1282,15 @@ export type PumpMeteora = {
           "signer": true
         },
         {
-          "name": "systemProgram",
+          "name": "system_program",
           "address": "11111111111111111111111111111111"
         },
         {
-          "name": "tokenProgram",
+          "name": "token_program",
           "address": "TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA"
         },
         {
-          "name": "associatedTokenProgram",
+          "name": "associated_token_program",
           "address": "ATokenGPvbdGVxr1b2hvZbsiqW5xWH25efTNsLJA8knL"
         }
       ],
@@ -1310,7 +1304,7 @@ export type PumpMeteora = {
           "type": "u8"
         },
         {
-          "name": "minimumReceiveAmount",
+          "name": "minimum_receive_amount",
           "type": "u64"
         }
       ],
@@ -1319,7 +1313,7 @@ export type PumpMeteora = {
   ],
   "accounts": [
     {
-      "name": "bondingCurve",
+      "name": "BondingCurve",
       "discriminator": [
         23,
         183,
@@ -1332,7 +1326,7 @@ export type PumpMeteora = {
       ]
     },
     {
-      "name": "config",
+      "name": "Config",
       "discriminator": [
         155,
         12,
@@ -1347,7 +1341,7 @@ export type PumpMeteora = {
   ],
   "events": [
     {
-      "name": "completeEvent",
+      "name": "CompleteEvent",
       "discriminator": [
         95,
         114,
@@ -1360,7 +1354,7 @@ export type PumpMeteora = {
       ]
     },
     {
-      "name": "launchEvent",
+      "name": "LaunchEvent",
       "discriminator": [
         27,
         193,
@@ -1373,7 +1367,7 @@ export type PumpMeteora = {
       ]
     },
     {
-      "name": "swapEvent",
+      "name": "SwapEvent",
       "discriminator": [
         64,
         198,
@@ -1389,165 +1383,165 @@ export type PumpMeteora = {
   "errors": [
     {
       "code": 6000,
-      "name": "valueTooSmall",
-      "msg": "valueTooSmall"
+      "name": "ValueTooSmall",
+      "msg": "ValueTooSmall"
     },
     {
       "code": 6001,
-      "name": "valueTooLarge",
-      "msg": "valueTooLarge"
+      "name": "ValueTooLarge",
+      "msg": "ValueTooLarge"
     },
     {
       "code": 6002,
-      "name": "valueInvalid",
-      "msg": "valueInvalid"
+      "name": "ValueInvalid",
+      "msg": "ValueInvalid"
     },
     {
       "code": 6003,
-      "name": "incorrectConfigAccount",
-      "msg": "incorrectConfigAccount"
+      "name": "IncorrectConfigAccount",
+      "msg": "IncorrectConfigAccount"
     },
     {
       "code": 6004,
-      "name": "incorrectAuthority",
-      "msg": "incorrectAuthority"
+      "name": "IncorrectAuthority",
+      "msg": "IncorrectAuthority"
     },
     {
       "code": 6005,
-      "name": "overflowOrUnderflowOccurred",
+      "name": "OverflowOrUnderflowOccurred",
       "msg": "Overflow or underflow occured"
     },
     {
       "code": 6006,
-      "name": "invalidAmount",
+      "name": "InvalidAmount",
       "msg": "Amount is invalid"
     },
     {
       "code": 6007,
-      "name": "incorrectTeamWallet",
+      "name": "IncorrectTeamWallet",
       "msg": "Incorrect team wallet address"
     },
     {
       "code": 6008,
-      "name": "curveNotCompleted",
+      "name": "CurveNotCompleted",
       "msg": "Curve is not completed"
     },
     {
       "code": 6009,
-      "name": "curveAlreadyCompleted",
+      "name": "CurveAlreadyCompleted",
       "msg": "Can not swap after the curve is completed"
     },
     {
       "code": 6010,
-      "name": "mintAuthorityEnabled",
+      "name": "MintAuthorityEnabled",
       "msg": "Mint authority should be revoked"
     },
     {
       "code": 6011,
-      "name": "freezeAuthorityEnabled",
+      "name": "FreezeAuthorityEnabled",
       "msg": "Freeze authority should be revoked"
     },
     {
       "code": 6012,
-      "name": "returnAmountTooSmall",
+      "name": "ReturnAmountTooSmall",
       "msg": "Return amount is too small compared to the minimum received amount"
     },
     {
       "code": 6013,
-      "name": "ammAlreadyExists",
+      "name": "AmmAlreadyExists",
       "msg": "AMM is already exist"
     },
     {
       "code": 6014,
-      "name": "notInitialized",
+      "name": "NotInitialized",
       "msg": "Global Not Initialized"
     },
     {
       "code": 6015,
-      "name": "invalidGlobalAuthority",
+      "name": "InvalidGlobalAuthority",
       "msg": "Invalid Global Authority"
     },
     {
       "code": 6016,
-      "name": "notWhiteList",
+      "name": "NotWhiteList",
       "msg": "This creator is not in whitelist"
     },
     {
       "code": 6017,
-      "name": "incorrectLaunchPhase",
-      "msg": "incorrectLaunchPhase"
+      "name": "IncorrectLaunchPhase",
+      "msg": "IncorrectLaunchPhase"
     },
     {
       "code": 6018,
-      "name": "insufficientTokens",
+      "name": "InsufficientTokens",
       "msg": "Not enough tokens to complete the sell order."
     },
     {
       "code": 6019,
-      "name": "insufficientSol",
+      "name": "InsufficientSol",
       "msg": "Not enough SOL received to be valid."
     },
     {
       "code": 6020,
-      "name": "sellFailed",
+      "name": "SellFailed",
       "msg": "Sell Failed"
     },
     {
       "code": 6021,
-      "name": "buyFailed",
+      "name": "BuyFailed",
       "msg": "Buy Failed"
     },
     {
       "code": 6022,
-      "name": "notBondingCurveMint",
+      "name": "NotBondingCurveMint",
       "msg": "This token is not a bonding curve token"
     },
     {
       "code": 6023,
-      "name": "notSol",
+      "name": "NotSOL",
       "msg": "Not quote mint"
     },
     {
       "code": 6024,
-      "name": "invalidMigrationAuthority",
+      "name": "InvalidMigrationAuthority",
       "msg": "Invalid Migration Authority"
     },
     {
       "code": 6025,
-      "name": "notCompleted",
+      "name": "NotCompleted",
       "msg": "Bonding curve is not completed"
     },
     {
       "code": 6026,
-      "name": "invalidMeteoraProgram",
+      "name": "InvalidMeteoraProgram",
       "msg": "Invalid Meteora Program"
     },
     {
       "code": 6027,
-      "name": "arithmeticError",
+      "name": "ArithmeticError",
       "msg": "Arithmetic Error"
     }
   ],
   "types": [
     {
-      "name": "amountConfig",
+      "name": "AmountConfig",
       "generics": [
         {
           "kind": "type",
-          "name": "t"
+          "name": "T"
         }
       ],
       "type": {
         "kind": "enum",
         "variants": [
           {
-            "name": "range",
+            "name": "Range",
             "fields": [
               {
                 "name": "min",
                 "type": {
                   "option": {
-                    "generic": "t"
+                    "generic": "T"
                   }
                 }
               },
@@ -1555,18 +1549,18 @@ export type PumpMeteora = {
                 "name": "max",
                 "type": {
                   "option": {
-                    "generic": "t"
+                    "generic": "T"
                   }
                 }
               }
             ]
           },
           {
-            "name": "enum",
+            "name": "Enum",
             "fields": [
               {
                 "vec": {
-                  "generic": "t"
+                  "generic": "T"
                 }
               }
             ]
@@ -1575,12 +1569,12 @@ export type PumpMeteora = {
       }
     },
     {
-      "name": "bondingCurve",
+      "name": "BondingCurve",
       "type": {
         "kind": "struct",
         "fields": [
           {
-            "name": "tokenMint",
+            "name": "token_mint",
             "type": "pubkey"
           },
           {
@@ -1588,38 +1582,38 @@ export type PumpMeteora = {
             "type": "pubkey"
           },
           {
-            "name": "initLamport",
+            "name": "init_lamport",
             "type": "u64"
           },
           {
-            "name": "tokenTotalSupply",
+            "name": "token_total_supply",
             "type": "u64"
           },
           {
-            "name": "virtualSolReserves",
+            "name": "virtual_sol_reserves",
             "type": "u64"
           },
           {
-            "name": "virtualTokenReserves",
+            "name": "virtual_token_reserves",
             "type": "u64"
           },
           {
-            "name": "realSolReserves",
+            "name": "real_sol_reserves",
             "type": "u64"
           },
           {
-            "name": "realTokenReserves",
+            "name": "real_token_reserves",
             "type": "u64"
           },
           {
-            "name": "isCompleted",
+            "name": "is_completed",
             "type": "bool"
           }
         ]
       }
     },
     {
-      "name": "completeEvent",
+      "name": "CompleteEvent",
       "type": {
         "kind": "struct",
         "fields": [
@@ -1632,14 +1626,14 @@ export type PumpMeteora = {
             "type": "pubkey"
           },
           {
-            "name": "bondingCurve",
+            "name": "bonding_curve",
             "type": "pubkey"
           }
         ]
       }
     },
     {
-      "name": "config",
+      "name": "Config",
       "type": {
         "kind": "struct",
         "fields": [
@@ -1648,38 +1642,38 @@ export type PumpMeteora = {
             "type": "pubkey"
           },
           {
-            "name": "pendingAuthority",
+            "name": "pending_authority",
             "type": "pubkey"
           },
           {
-            "name": "teamWallet",
+            "name": "team_wallet",
             "type": "pubkey"
           },
           {
-            "name": "initBondingCurve",
+            "name": "init_bonding_curve",
             "type": "f64"
           },
           {
-            "name": "platformBuyFee",
+            "name": "platform_buy_fee",
             "type": "f64"
           },
           {
-            "name": "platformSellFee",
+            "name": "platform_sell_fee",
             "type": "f64"
           },
           {
-            "name": "platformMigrationFee",
+            "name": "platform_migration_fee",
             "type": "f64"
           },
           {
-            "name": "curveLimit",
+            "name": "curve_limit",
             "type": "u64"
           },
           {
-            "name": "lamportAmountConfig",
+            "name": "lamport_amount_config",
             "type": {
               "defined": {
-                "name": "amountConfig",
+                "name": "AmountConfig",
                 "generics": [
                   {
                     "kind": "type",
@@ -1690,10 +1684,10 @@ export type PumpMeteora = {
             }
           },
           {
-            "name": "tokenSupplyConfig",
+            "name": "token_supply_config",
             "type": {
               "defined": {
-                "name": "amountConfig",
+                "name": "AmountConfig",
                 "generics": [
                   {
                     "kind": "type",
@@ -1704,10 +1698,10 @@ export type PumpMeteora = {
             }
           },
           {
-            "name": "tokenDecimalsConfig",
+            "name": "token_decimals_config",
             "type": {
               "defined": {
-                "name": "amountConfig",
+                "name": "AmountConfig",
                 "generics": [
                   {
                     "kind": "type",
@@ -1718,15 +1712,15 @@ export type PumpMeteora = {
             }
           },
           {
-            "name": "initialVirtualTokenReservesConfig",
+            "name": "initial_virtual_token_reserves_config",
             "type": "u64"
           },
           {
-            "name": "initialVirtualSolReservesConfig",
+            "name": "initial_virtual_sol_reserves_config",
             "type": "u64"
           },
           {
-            "name": "initialRealTokenReservesConfig",
+            "name": "initial_real_token_reserves_config",
             "type": "u64"
           },
           {
@@ -1734,14 +1728,14 @@ export type PumpMeteora = {
             "type": "bool"
           },
           {
-            "name": "globalAuthority",
+            "name": "global_authority",
             "type": "pubkey"
           }
         ]
       }
     },
     {
-      "name": "launchEvent",
+      "name": "LaunchEvent",
       "type": {
         "kind": "struct",
         "fields": [
@@ -1754,7 +1748,7 @@ export type PumpMeteora = {
             "type": "pubkey"
           },
           {
-            "name": "bondingCurve",
+            "name": "bonding_curve",
             "type": "pubkey"
           },
           {
@@ -1766,22 +1760,22 @@ export type PumpMeteora = {
             "type": "u8"
           },
           {
-            "name": "tokenSupply",
+            "name": "token_supply",
             "type": "u64"
           },
           {
-            "name": "reserveLamport",
+            "name": "reserve_lamport",
             "type": "u64"
           },
           {
-            "name": "reserveToken",
+            "name": "reserve_token",
             "type": "u64"
           }
         ]
       }
     },
     {
-      "name": "swapEvent",
+      "name": "SwapEvent",
       "type": {
         "kind": "struct",
         "fields": [
@@ -1794,11 +1788,11 @@ export type PumpMeteora = {
             "type": "pubkey"
           },
           {
-            "name": "bondingCurve",
+            "name": "bonding_curve",
             "type": "pubkey"
           },
           {
-            "name": "amountIn",
+            "name": "amount_in",
             "type": "u64"
           },
           {
@@ -1806,23 +1800,23 @@ export type PumpMeteora = {
             "type": "u8"
           },
           {
-            "name": "minimumReceiveAmount",
+            "name": "minimum_receive_amount",
             "type": "u64"
           },
           {
-            "name": "amountOut",
+            "name": "amount_out",
             "type": "u64"
           },
           {
-            "name": "virtualSolReserves",
+            "name": "virtual_sol_reserves",
             "type": "u64"
           },
           {
-            "name": "virtualTokenReserves",
+            "name": "virtual_token_reserves",
             "type": "u64"
           }
         ]
       }
     }
   ]
-};
+}

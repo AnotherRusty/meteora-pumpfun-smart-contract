@@ -92,12 +92,12 @@ function programCommand(name: string) {
     .option(
       "-r, --rpc <string>",
       "Solana cluster RPC name",
-      "https://api.devnet.solana.com"//"https://devnet.helius-rpc.com/?api-key=facb2b5c-c0d2-44b1-8538-986b895bf122"
+      "https://api.mainnet-beta.solana.com"
     )
     .option(
       "-k, --keypair <string>",
       "Solana wallet Keypair Path",
-      "./keys/EgBcC7KVQTh1QeU3qxCFsnwZKYMMQkv6TzgEDkKvSNLv.json"
+      "./keys/*.json"
     );
 }
 

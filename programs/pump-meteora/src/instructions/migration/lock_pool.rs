@@ -2,12 +2,10 @@ use crate::constants::*;
 use crate::errors::ContractError;
 use crate::state::bondingcurve::*;
 use crate::state::meteora::{get_function_hash, get_lock_lp_ix_data};
-use crate::state::config::*;
 use anchor_lang::prelude::*;
-use anchor_lang::solana_program::system_instruction;
 use anchor_lang::solana_program::{instruction::Instruction, program::invoke_signed};
 use anchor_spl::{associated_token, token::TokenAccount};
-use anchor_spl::token::{self, Mint, Token, Transfer};
+use anchor_spl::token::{ Mint};
 use std::str::FromStr;
 
 #[derive(Accounts)]
@@ -108,7 +106,7 @@ pub struct LockPool<'info> {
 
 pub fn lock_pool(ctx: Context<LockPool>) -> Result<()> {
     
-    msg!("Create pool: end {:?}", ctx.accounts.payer_pool_lp);
+    // msg!("Create pool: end {:?}", ctx.accounts.payer_pool_lp);
 
     require!(
         ctx.accounts.meteora_program.key() == Pubkey::from_str(METEORA_PROGRAM_KEY).unwrap(),

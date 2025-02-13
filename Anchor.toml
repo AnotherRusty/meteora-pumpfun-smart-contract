@@ -4,19 +4,21 @@
 resolution = true
 skip-lint = false
 
-[programs.devnet]
-pump_meteora = "G38sN4owkSLDunjcXD66bGLqWEDsCP6cvc5SS6ruSG2j"
+[programs.mainnet]
+pump_meteora = "w7LSvr1Y4DW9xTTdCMdxAGaFTXti2xEu1ykEUeXhTRx"
 
+[programs.devnet]
+pump_meteora = "w7LSvr1Y4DW9xTTdCMdxAGaFTXti2xEu1ykEUeXhTRx"
 
 [programs.localnet]
-pump_meteora = "G38sN4owkSLDunjcXD66bGLqWEDsCP6cvc5SS6ruSG2j"
+pump_meteora = "w7LSvr1Y4DW9xTTdCMdxAGaFTXti2xEu1ykEUeXhTRx"
 
 [registry]
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "https://devnet.helius-rpc.com/?api-key=facb2b5c-c0d2-44b1-8538-986b895bf122"
-wallet = "./keys/admin.json"
+cluster = "https://api.mainnet-beta.solana.com"
+wallet = "./keys/*.json"
 
 [scripts]
 build = "rm -rf target && anchor build && mkdir -p target/deploy && cp ./keys/program/3uHJMHzeiqdqQ3LNc5bNVxuCp224HGtStPkv1JUEcabr.json ./target/deploy/pump_meteora-keypair.json"

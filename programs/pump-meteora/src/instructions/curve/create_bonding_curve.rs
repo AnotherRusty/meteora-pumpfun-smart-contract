@@ -1,7 +1,8 @@
-use std::ops::{Div, Mul};
-
 use crate::{
-    constants::{BONDING_CURVE, CONFIG, GLOBAL, METADATA, TEST_INITIAL_VIRTUAL_TOKEN_RESERVES,TEST_INITIAL_VIRTUAL_SOL_RESERVES, TEST_INITIAL_REAL_TOKEN_RESERVES},
+    constants::{
+        BONDING_CURVE, CONFIG, GLOBAL, METADATA, TEST_INITIAL_REAL_TOKEN_RESERVES,
+        TEST_INITIAL_VIRTUAL_SOL_RESERVES, TEST_INITIAL_VIRTUAL_TOKEN_RESERVES,
+    },
     errors::*,
     events::LaunchEvent,
     state::{bondingcurve::*, config::*},
@@ -99,19 +100,6 @@ pub struct CreateBondingCurve<'info> {
         constraint = global_config.team_wallet == team_wallet.key() @ContractError::IncorrectAuthority
     )]
     pub team_wallet: AccountInfo<'info>,
-
-    /// CHECK: ata of team wallet
-    #[account(
-        mut,
-        seeds = [
-            team_wallet.key().as_ref(),
-            anchor_spl::token::spl_token::ID.as_ref(),
-            token.key().as_ref(),
-        ],
-        bump,
-        seeds::program = anchor_spl::associated_token::ID
-    )]
-    team_wallet_ata: AccountInfo<'info>,
 }
 
 impl<'info> CreateBondingCurve<'info> {
@@ -135,65 +123,37 @@ impl<'info> CreateBondingCurve<'info> {
         let global_token_account = &self.global_token_account;
         let bonding_curve = &mut self.bonding_curve;
         let global_vault = &self.global_vault;
-        let team_wallet = &mut self.team_wallet;
-        let team_wallet_ata = &self.team_wallet_ata;
 
         //  check params
         let decimal_multiplier = 10u64.pow(decimals as u32);
         let fractional_tokens = token_supply % decimal_multiplier;
         if fractional_tokens != 0 {
-            msg!("expected whole number of tokens, got fractional tokens: 0.{fractional_tokens}");
+            // msg!("expected whole number of tokens, got fractional tokens: 0.{fractional_tokens}");
             return Err(ValueInvalid.into());
         }
 
         global_config
             .lamport_amount_config
             .validate(&reserve_lamport)?;
-        msg!("lamport_amount_config {:?}", reserve_lamport);
+        // msg!("lamport_amount_config {:?}", reserve_lamport);
 
         global_config
             .token_supply_config
             .validate(&(token_supply / decimal_multiplier))?;
-        msg!("token supply {:?} {:?}", token_supply, decimal_multiplier );
+        // msg!("token supply {:?} {:?}", token_supply, decimal_multiplier);
 
         global_config.token_decimals_config.validate(&decimals)?;
-
-        // let init_bonding_curve = (token_supply as f64)
-        //     .mul(global_config.init_bonding_curve)
-        //     .div(100_f64) as u64;
-
-        // let amount_to_team = token_supply - init_bonding_curve;
-
-        msg!("{:?},",  global_config.initial_virtual_sol_reserves_config);
 
         // create token launch pda
         bonding_curve.token_mint = token.key();
         bonding_curve.creator = creator.key();
         bonding_curve.init_lamport = reserve_lamport;
-        // bonding_curve.reserve_lamport = reserve_lamport;
-        // bonding_curve.reserve_token = global_config.initial_real_token_reserves_config;
 
         bonding_curve.virtual_sol_reserves = TEST_INITIAL_VIRTUAL_SOL_RESERVES;
         bonding_curve.virtual_token_reserves = TEST_INITIAL_VIRTUAL_TOKEN_RESERVES;
         bonding_curve.real_sol_reserves = 0;
         bonding_curve.real_token_reserves = TEST_INITIAL_REAL_TOKEN_RESERVES;
         bonding_curve.token_total_supply = token_supply;
-
-        msg!("global_config.initial_real_token_reserves_config {}",global_config.initial_real_token_reserves_config);
-        // let init_bonding_curve = TEST_INITIAL_REAL_TOKEN_RESERVES;
-        // let amount_to_team = token_supply - init_bonding_curve;
-
-        // msg!("init_bonding_curve: {}, amount_to_team: {}",init_bonding_curve,amount_to_team);
-        msg!(
-            "bonding_curve.virtual_sol_reserves {:?},
-             bonding_curve.virtual_token_reserves {:?},
-             bonding_curve.real_sol_reserves {:?},
-             bonding_curve.real_token_reserves {:?}",
-             bonding_curve.virtual_sol_reserves,
-             bonding_curve.virtual_token_reserves,
-             bonding_curve.real_sol_reserves,
-             bonding_curve.real_token_reserves
-        );
 
         // create global token account
         associated_token::create(CpiContext::new(
@@ -207,19 +167,7 @@ impl<'info> CreateBondingCurve<'info> {
                 system_program: self.system_program.to_account_info(),
             },
         ))?;
-        // create team token account
-        // anchor_spl::associated_token::create(CpiContext::new(
-        //     self.associated_token_program.to_account_info(),
-        //     anchor_spl::associated_token::Create {
-        //         payer: creator.to_account_info(),
-        //         associated_token: team_wallet_ata.to_account_info(),
-        //         authority: team_wallet.to_account_info(),
 
-        //         mint: token.to_account_info(),
-        //         system_program: self.system_program.to_account_info(),
-        //         token_program: self.token_program.to_account_info(),
-        //     },
-        // ))?;
         let signer_seeds: &[&[&[u8]]] = &[&[GLOBAL.as_bytes(), &[global_vault_bump]]];
 
         // mint tokens to bonding curve & team
@@ -235,18 +183,6 @@ impl<'info> CreateBondingCurve<'info> {
             ),
             token_supply,
         )?;
-        // token::mint_to(
-        //     CpiContext::new_with_signer(
-        //         self.token_program.to_account_info(),
-        //         token::MintTo {
-        //             mint: token.to_account_info(),
-        //             to: team_wallet_ata.to_account_info(),
-        //             authority: global_vault.to_account_info(),
-        //         },
-        //         signer_seeds,
-        //     ),
-        //     amount_to_team,
-        // )?;
 
         // create metadata
         metadata::create_metadata_accounts_v3(
