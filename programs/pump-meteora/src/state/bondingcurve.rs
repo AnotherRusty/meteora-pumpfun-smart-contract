@@ -94,20 +94,11 @@ impl<'info> BondingCurveAccount<'info> for Account<'info, BondingCurve> {
             return err!(ContractError::InvalidAmount);
         }
 
-        // msg!(
-        //     "Swap started. direction: {}, AmountIn: {}, MinOutAmount: {}",
-        //     direction,
-        //     amount,
-        //     minimum_receive_amount
-        // );
-
         let amount_out;
 
         if direction == 1 {
             //Sell tokens
             let sell_result = self.apply_sell(amount).ok_or(ContractError::SellFailed)?;
-
-            // msg!("SellResult: {:#?}", sell_result);
 
             token_transfer_user(
                 user_ata.clone(),
@@ -133,7 +124,6 @@ impl<'info> BondingCurveAccount<'info> for Account<'info, BondingCurve> {
 
             //  transfer fee to team wallet
             let fee_amount = sell_result.sol_amount - adjusted_amount;
-            // msg! {"fee: {:?}", fee_amount}
 
             sol_transfer_with_signer(
                 source.clone(),
@@ -157,8 +147,6 @@ impl<'info> BondingCurveAccount<'info> for Account<'info, BondingCurve> {
                 .apply_buy(adjusted_amount)
                 .ok_or(ContractError::BuyFailed)?;
 
-            // msg!("BuyResult: {:#?}", buy_result);
-
             if self.is_completed == true {
                 emit!(CompleteEvent {
                     user: user.key(),
@@ -166,8 +154,6 @@ impl<'info> BondingCurveAccount<'info> for Account<'info, BondingCurve> {
                     bonding_curve: self.key()
                 });
             }
-
-            // msg!("token_transfer_with_signer start");
 
             token_transfer_with_signer(
                 global_ata.clone(),
@@ -177,7 +163,7 @@ impl<'info> BondingCurveAccount<'info> for Account<'info, BondingCurve> {
                 signer,
                 buy_result.token_amount,
             )?;
-            // msg!("sol_transfer_from_user start");
+
             sol_transfer_from_user(
                 &user,
                 source.clone(),
@@ -187,9 +173,7 @@ impl<'info> BondingCurveAccount<'info> for Account<'info, BondingCurve> {
 
             //  transfer fee to team wallet
             let fee_amount = amount - adjusted_amount;
-            // msg! {"fee: {:?}", fee_amount}
 
-            // msg!("sol_transfer_from_user start");
             sol_transfer_from_user(&user, team_wallet.clone(), &system_program, fee_amount)?;
             amount_out = buy_result.sol_amount;
         }
@@ -201,7 +185,6 @@ impl<'info> BondingCurveAccount<'info> for Account<'info, BondingCurve> {
         if token_amount == 0 {
             return None;
         }
-        // msg!("GetSolForSellTokens: token_amount: {}", token_amount);
 
         // Convert to common decimal basis (using 9 decimals as base)
         let current_sol = self.virtual_sol_reserves as u128;
@@ -220,7 +203,6 @@ impl<'info> BondingCurveAccount<'info> for Account<'info, BondingCurve> {
 
         let sol_out = current_sol.checked_sub(new_sol)?;
 
-        // msg!("GetSolForSellTokens: sol_out: {}", sol_out);
         <u128 as TryInto<u64>>::try_into(sol_out).ok()
     }
 
@@ -228,14 +210,6 @@ impl<'info> BondingCurveAccount<'info> for Account<'info, BondingCurve> {
         if sol_amount == 0 {
             return None;
         }
-        // msg!(
-        //     "GetTokensForBuySol: sol_amount: {},
-        // self.virtual_sol_reserves: {},
-        // self.virtual_token_reserves: {}",
-        //     sol_amount,
-        //     self.virtual_sol_reserves,
-        //     self.virtual_token_reserves
-        // );
 
         // Convert to common decimal basis (using 9 decimals as base)
         let current_sol = self.virtual_sol_reserves as u128;
@@ -254,16 +228,13 @@ impl<'info> BondingCurveAccount<'info> for Account<'info, BondingCurve> {
             .checked_mul(1_000_000)? // Convert to 6 decimals
             .checked_div(1_000_000_000)?; // From 9 decimals
 
-        // msg!("GetTokensForBuySol: tokens_out: {}", tokens_out);
         <u128 as TryInto<u64>>::try_into(tokens_out).ok()
     }
 
     fn apply_buy(&mut self, mut sol_amount: u64) -> Option<BuyResult> {
-        // msg!("ApplyBuy: sol_amount: {}", sol_amount);
 
         // Computing Token Amount out
         let mut token_amount = self.get_tokens_for_buy_sol(sol_amount)?;
-        // msg!("ApplyBuy: token_amount: {}", token_amount);
 
         if token_amount >= self.real_token_reserves {
             // Last Buy
@@ -278,10 +249,9 @@ impl<'info> BondingCurveAccount<'info> for Account<'info, BondingCurve> {
                 .checked_sub(token_amount as u128)?
                 .try_into()
                 .ok()?;
-            self.virtual_sol_reserves = 115_005_359_056; // Total raise amount at end
+            self.virtual_sol_reserves = 57_502_679_529; // Total raise amount at end
 
             let recomputed_sol_amount = self.get_sol_for_sell_tokens(token_amount)?;
-            msg!("ApplyBuy: recomputed_sol_amount: {}", recomputed_sol_amount);
             sol_amount = recomputed_sol_amount;
 
             // Restore the state with the recomputed sol_amount
@@ -296,55 +266,24 @@ impl<'info> BondingCurveAccount<'info> for Account<'info, BondingCurve> {
         // New Virtual Token Reserves
         let new_virtual_token_reserves =
             (self.virtual_token_reserves as u128).checked_sub(token_amount as u128)?;
-        // msg!(
-        //     "ApplyBuy: new_virtual_token_reserves: {}",
-        //     new_virtual_token_reserves
-        // );
 
         // New Real Token Reserves
         let new_real_token_reserves =
             (self.real_token_reserves as u128).checked_sub(token_amount as u128)?;
-        // msg!(
-        //     "ApplyBuy: new_real_token_reserves: {}",
-        //     new_real_token_reserves
-        // );
 
         // Adjusting sol reserve values
         // New Virtual Sol Reserves
         let new_virtual_sol_reserves =
             (self.virtual_sol_reserves as u128).checked_add(sol_amount as u128)?;
-        // msg!(
-        //     "ApplyBuy: new_virtual_sol_reserves: {}",
-        //     new_virtual_sol_reserves
-        // );
 
         // New Real Sol Reserves
         let new_real_sol_reserves =
             (self.real_sol_reserves as u128).checked_add(sol_amount as u128)?;
-        // msg!("ApplyBuy: new_real_sol_reserves: {}", new_real_sol_reserves);
 
         self.virtual_token_reserves = new_virtual_token_reserves.try_into().ok()?;
         self.real_token_reserves = new_real_token_reserves.try_into().ok()?;
         self.virtual_sol_reserves = new_virtual_sol_reserves.try_into().ok()?;
         self.real_sol_reserves = new_real_sol_reserves.try_into().ok()?;
-
-        // msg!(
-        //     "virtual_token_reserves: {:?},
-        //     real_token_reserves: {:?},
-        //     virtual_sol_reserves: {:?},
-        //     real_sol_reserves: {:?}",
-        //     self.virtual_token_reserves,
-        //     self.real_token_reserves,
-        //     self.virtual_sol_reserves,
-        //     self.real_sol_reserves
-        // );
-
-        // msg!(
-        //     "BuyResult:: token_amount: {:?},
-        //      sol_amount: {:?}",
-        //     token_amount,
-        //     sol_amount
-        // );
 
         Some(BuyResult {
             token_amount,
@@ -353,67 +292,30 @@ impl<'info> BondingCurveAccount<'info> for Account<'info, BondingCurve> {
     }
 
     fn apply_sell(&mut self, token_amount: u64) -> Option<SellResult> {
-        // msg!("apply_sell: token_amount: {}", token_amount);
-
         // Computing Sol Amount out
         let sol_amount = self.get_sol_for_sell_tokens(token_amount)?;
-        // msg!("apply_sell: sol_amount: {}", sol_amount);
 
         // Adjusting token reserve values
         // New Virtual Token Reserves
         let new_virtual_token_reserves =
             (self.virtual_token_reserves as u128).checked_add(token_amount as u128)?;
-        // msg!(
-        //     "apply_sell: new_virtual_token_reserves: {}",
-        //     new_virtual_token_reserves
-        // );
 
         // New Real Token Reserves
         let new_real_token_reserves =
             (self.real_token_reserves as u128).checked_add(token_amount as u128)?;
-        // msg!(
-        //     "apply_sell: new_real_token_reserves: {}",
-        //     new_real_token_reserves
-        // );
 
         // Adjusting sol reserve values
         // New Virtual Sol Reserves
         let new_virtual_sol_reserves =
             (self.virtual_sol_reserves as u128).checked_sub(sol_amount as u128)?;
-        // msg!(
-        //     "apply_sell: new_virtual_sol_reserves: {}",
-        //     new_virtual_sol_reserves
-        // );
 
         // New Real Sol Reserves
         let new_real_sol_reserves = self.real_sol_reserves.checked_sub(sol_amount)?;
-        // msg!(
-        //     "apply_sell: new_real_sol_reserves: {}",
-        //     new_real_sol_reserves
-        // );
 
         self.virtual_token_reserves = new_virtual_token_reserves.try_into().ok()?;
         self.real_token_reserves = new_real_token_reserves.try_into().ok()?;
         self.virtual_sol_reserves = new_virtual_sol_reserves.try_into().ok()?;
         self.real_sol_reserves = new_real_sol_reserves.try_into().ok()?;
-
-        // msg!(
-        //     "virtual_token_reserves: {:?},
-        //     real_token_reserves: {:?},
-        //     virtual_sol_reserves: {:?},
-        //     real_sol_reserves: {:?}",
-        //     self.virtual_token_reserves,
-        //     self.real_token_reserves,
-        //     self.virtual_sol_reserves,
-        //     self.real_sol_reserves
-        // );
-
-        // msg!(
-        //     "SellResult:: token_amount: {:?},
-        //      sol_amount: {:?}",
-        //     token_amount,
-        //     sol_amount
-        // );
 
         Some(SellResult {
             token_amount,

@@ -1,8 +1,5 @@
 use crate::{
-    constants::{
-        BONDING_CURVE, CONFIG, GLOBAL, METADATA, TEST_INITIAL_REAL_TOKEN_RESERVES,
-        TEST_INITIAL_VIRTUAL_SOL_RESERVES, TEST_INITIAL_VIRTUAL_TOKEN_RESERVES,
-    },
+    constants::{BONDING_CURVE, CONFIG, GLOBAL, METADATA},
     errors::*,
     events::LaunchEvent,
     state::{bondingcurve::*, config::*},
@@ -128,19 +125,16 @@ impl<'info> CreateBondingCurve<'info> {
         let decimal_multiplier = 10u64.pow(decimals as u32);
         let fractional_tokens = token_supply % decimal_multiplier;
         if fractional_tokens != 0 {
-            // msg!("expected whole number of tokens, got fractional tokens: 0.{fractional_tokens}");
             return Err(ValueInvalid.into());
         }
 
         global_config
             .lamport_amount_config
             .validate(&reserve_lamport)?;
-        // msg!("lamport_amount_config {:?}", reserve_lamport);
 
         global_config
             .token_supply_config
             .validate(&(token_supply / decimal_multiplier))?;
-        // msg!("token supply {:?} {:?}", token_supply, decimal_multiplier);
 
         global_config.token_decimals_config.validate(&decimals)?;
 
@@ -149,10 +143,10 @@ impl<'info> CreateBondingCurve<'info> {
         bonding_curve.creator = creator.key();
         bonding_curve.init_lamport = reserve_lamport;
 
-        bonding_curve.virtual_sol_reserves = TEST_INITIAL_VIRTUAL_SOL_RESERVES;
-        bonding_curve.virtual_token_reserves = TEST_INITIAL_VIRTUAL_TOKEN_RESERVES;
+        bonding_curve.virtual_sol_reserves = global_config.initial_virtual_sol_reserves_config;
+        bonding_curve.virtual_token_reserves = global_config.initial_virtual_token_reserves_config;
         bonding_curve.real_sol_reserves = 0;
-        bonding_curve.real_token_reserves = TEST_INITIAL_REAL_TOKEN_RESERVES;
+        bonding_curve.real_token_reserves = global_config.initial_real_token_reserves_config;
         bonding_curve.token_total_supply = token_supply;
 
         // create global token account
@@ -234,11 +228,10 @@ impl<'info> CreateBondingCurve<'info> {
             mint: self.token.key(),
             bonding_curve: self.bonding_curve.key(),
             metadata: self.token_metadata_account.key(),
-
             decimals,
             token_supply,
             reserve_lamport,
-            reserve_token: TEST_INITIAL_REAL_TOKEN_RESERVES
+            reserve_token: global_config.initial_real_token_reserves_config
         });
 
         Ok(())

@@ -45,6 +45,7 @@ export const createConfigTx = async (
     })
     .transaction();
 
+
   tx.feePayer = admin;
   tx.recentBlockhash = (await connection.getLatestBlockhash()).blockhash;
 
@@ -60,7 +61,7 @@ export const createBondingCurveTx = async (
   uri: string,
 
   user: PublicKey,
-
+  teamWallet: PublicKey,
   connection: Connection,
   program: Program<PumpMeteora>
 ) => {
@@ -84,7 +85,7 @@ export const createBondingCurveTx = async (
     .accounts({
       creator: user,
       token: tokenKp.publicKey,
-      teamWallet: user,
+      teamWallet,
     })
     .transaction();
 

@@ -3,12 +3,14 @@ use anchor_lang::{prelude::*, AnchorDeserialize, AnchorSerialize};
 use core::fmt::Debug;
 
 #[account]
+#[derive(Debug)]
 pub struct Config {
     pub authority: Pubkey,
-    //  use this for 2 step ownership transfer
-    pub pending_authority: Pubkey,
+    //  use this for meteora migration
+    pub migration_authority: Pubkey,
 
     pub team_wallet: Pubkey,
+    pub migration_wallet: Pubkey,
 
     pub init_bonding_curve: f64, // bonding curve init percentage. The remaining amount is sent to team wallet for distribution to agent
 
@@ -25,9 +27,10 @@ pub struct Config {
     pub initial_virtual_token_reserves_config: u64,
     pub initial_virtual_sol_reserves_config: u64,
     pub initial_real_token_reserves_config: u64,
+    pub initial_meteora_token_reserves: u64,
+    pub initial_meteora_sol_amount: u64,
 
     pub initialized: bool,
-    pub global_authority: Pubkey, // can update settings
 }
 
 #[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Eq, Debug)]

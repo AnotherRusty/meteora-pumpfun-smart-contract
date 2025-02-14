@@ -18,7 +18,6 @@ pub struct Swap<'info> {
     )]
     global_config: Box<Account<'info, Config>>,
     
-    //  team wallet
     /// CHECK: should be same with the address in the global_config
     #[account(
         mut,
@@ -119,7 +118,6 @@ pub fn handler(&mut self, amount: u64, direction: u8, minimum_receive_amount: u6
         &[global_vault_bump],
     ]];
 
-    
     let amount_out = bonding_curve.swap(
         &*self.global_config,
         token.as_ref(),

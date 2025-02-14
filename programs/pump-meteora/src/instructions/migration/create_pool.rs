@@ -1,4 +1,4 @@
-use crate::constants::{METEORA_PROGRAM_KEY,CONFIG, BONDING_CURVE, QUOTE_MINT, GLOBAL, TOKEN_VAULT_SEED, TEST_INITIAL_METEORA_TOKEN_RESERVES};
+use crate::constants::{METEORA_PROGRAM_KEY,CONFIG,  BONDING_CURVE, QUOTE_MINT, GLOBAL, TOKEN_VAULT_SEED};
 use crate::state::{bondingcurve::*, meteora::get_pool_create_ix_data};
 use crate::{errors::ContractError, state::config::*};
 use anchor_lang::prelude::*;
@@ -15,7 +15,6 @@ pub struct InitializePoolWithConfig<'info> {
     )]
     global_config: Box<Account<'info, Config>>,
 
-    //  team wallet
     /// CHECK: should be same with the address in the global_config
     #[account(
         mut,
@@ -134,6 +133,9 @@ pub struct InitializePoolWithConfig<'info> {
     pub payer: Signer<'info>,
 
     #[account(mut)]
+    pub authority: Signer<'info>,
+
+    #[account(mut)]
     /// CHECK: LP mint metadata PDA. Metaplex do the checking.
     pub mint_metadata: UncheckedAccount<'info>,
     /// CHECK: Additional program accounts
@@ -159,7 +161,10 @@ pub struct InitializePoolWithConfig<'info> {
 pub fn initialize_pool_with_config(ctx: Context<InitializePoolWithConfig>) -> Result<()> {
     let quote_mint: Pubkey = Pubkey::from_str(QUOTE_MINT).unwrap();
 
-    // msg!("initialize_pool_with_config start");
+    require!(
+        ctx.accounts.authority.key() == ctx.accounts.global_config.migration_authority.key(),
+        ContractError::InvalidMigrationAuthority
+    );
 
     require!(
         ctx.accounts.bonding_curve.token_mint.key() == ctx.accounts.token_b_mint.key(),
@@ -181,10 +186,7 @@ pub fn initialize_pool_with_config(ctx: Context<InitializePoolWithConfig>) -> Re
         ContractError::InvalidMeteoraProgram
     );
 
-    // msg!("current real_sol_reserves: {}", ctx.accounts.bonding_curve.real_sol_reserves);
-    // msg!("current real_token_reserves: {}", ctx.accounts.bonding_curve.real_token_reserves);
-   
-    let token_a_amount = ctx
+    let check_sol_amount = ctx
         .accounts
         .bonding_curve
         .real_sol_reserves
@@ -193,11 +195,12 @@ pub fn initialize_pool_with_config(ctx: Context<InitializePoolWithConfig>) -> Re
         .checked_sub(40_000_000)
         .ok_or(ContractError::ArithmeticError)?;
 
-    // msg!("Token A Amount: {}", token_a_amount);
+    require!(
+        check_sol_amount >= ctx.accounts.global_config.initial_meteora_sol_amount , ContractError::ArithmeticError
+    );
 
-    let token_b_amount = TEST_INITIAL_METEORA_TOKEN_RESERVES;
-
-    // msg!("Token B Amount: {}", token_b_amount);
+    let token_a_amount = ctx.accounts.global_config.initial_meteora_sol_amount;
+    let token_b_amount = ctx.accounts.global_config.initial_meteora_token_reserves;
 
     let signer_seeds: &[&[&[u8]]] = &[&[
         GLOBAL.as_bytes(),
@@ -221,7 +224,6 @@ pub fn initialize_pool_with_config(ctx: Context<InitializePoolWithConfig>) -> Re
     )?;
 
     // Transfer and wrap sol to payer token a - Sol Escrow is Signer
-    // Transfer
     let sol_ix = system_instruction::transfer(
         &ctx.accounts.global_vault.to_account_info().key,
         &ctx.accounts.payer_token_a.to_account_info().key,
@@ -249,7 +251,6 @@ pub fn initialize_pool_with_config(ctx: Context<InitializePoolWithConfig>) -> Re
     let cpi_program = ctx.accounts.token_program.to_account_info();
     let cpi_ctx = CpiContext::new_with_signer(cpi_program, cpi_accounts, signer_seeds);
     token::sync_native(cpi_ctx)?;
-
 
     // Create pool
     let mut accounts = vec![
@@ -328,7 +329,6 @@ pub fn initialize_pool_with_config(ctx: Context<InitializePoolWithConfig>) -> Re
         ],
         signer_seeds, // Signer is the SOL Escrow
     )?;
-
 
     // Fee transfer
     let sol_ix = system_instruction::transfer(

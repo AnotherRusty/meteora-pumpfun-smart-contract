@@ -1,5 +1,5 @@
 {
-  "address": "w7LSvr1Y4DW9xTTdCMdxAGaFTXti2xEu1ykEUeXhTRx",
+  "address": "9MHPjXpZXgJrB4NiJVFStE5qy7Nqp7yaYpaqNe5jNfMw",
   "metadata": {
     "name": "pump_meteora",
     "version": "0.1.0",
@@ -822,6 +822,11 @@
           "signer": true
         },
         {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
           "name": "mint_metadata",
           "writable": true
         },
@@ -868,6 +873,24 @@
         152
       ],
       "accounts": [
+        {
+          "name": "global_config",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
         {
           "name": "bonding_curve",
           "writable": true,
@@ -965,7 +988,16 @@
           "signer": true
         },
         {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
           "name": "fee_receiver",
+          "writable": true
+        },
+        {
+          "name": "creator_receiver",
           "writable": true
         },
         {
@@ -1642,11 +1674,15 @@
             "type": "pubkey"
           },
           {
-            "name": "pending_authority",
+            "name": "migration_authority",
             "type": "pubkey"
           },
           {
             "name": "team_wallet",
+            "type": "pubkey"
+          },
+          {
+            "name": "migration_wallet",
             "type": "pubkey"
           },
           {
@@ -1724,12 +1760,16 @@
             "type": "u64"
           },
           {
-            "name": "initialized",
-            "type": "bool"
+            "name": "initial_meteora_token_reserves",
+            "type": "u64"
           },
           {
-            "name": "global_authority",
-            "type": "pubkey"
+            "name": "initial_meteora_sol_amount",
+            "type": "u64"
+          },
+          {
+            "name": "initialized",
+            "type": "bool"
           }
         ]
       }

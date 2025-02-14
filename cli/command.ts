@@ -10,7 +10,6 @@ import {
   calculateSwap,
 } from "./scripts";
 
-
 program.version("0.0.1");
 
 programCommand('migrate')
@@ -92,7 +91,7 @@ function programCommand(name: string) {
     .option(
       "-r, --rpc <string>",
       "Solana cluster RPC name",
-      "https://api.mainnet-beta.solana.com"
+      "https://api.devnet.solana.com"
     )
     .option(
       "-k, --keypair <string>",
@@ -128,9 +127,9 @@ program.parse(process.argv);
 
   yarn script config
   yarn script curve     //catch token_address
-  yarn script getCurrentPrice -m ES9SQWshCDRcJyEzxMLksqy8TDWjrYxaR46L7w9nEQQ8
-  yarn script calculateSwap -m ES9SQWshCDRcJyEzxMLksqy8TDWjrYxaR46L7w9nEQQ8 -a 2000
-  yarn script swap -t ES9SQWshCDRcJyEzxMLksqy8TDWjrYxaR46L7w9nEQQ8 -a 2000000000 -s 0
-  yarn script migrate -m ES9SQWshCDRcJyEzxMLksqy8TDWjrYxaR46L7w9nEQQ8
+  yarn script getCurrentPrice -m EfBKtYDURoWtoH8AszmheAP2nQnmAEdAMWhWV36BvhjD
+  yarn script calculateSwap -m EfBKtYDURoWtoH8AszmheAP2nQnmAEdAMWhWV36BvhjD -a 2
+  yarn script swap -t EfBKtYDURoWtoH8AszmheAP2nQnmAEdAMWhWV36BvhjD -a 2000000000 -s 0
+  yarn script migrate -m EfBKtYDURoWtoH8AszmheAP2nQnmAEdAMWhWV36BvhjD
   
 */

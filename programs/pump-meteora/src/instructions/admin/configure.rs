@@ -111,7 +111,7 @@ impl<'info> Configure<'info> {
                 &self.payer,
                 self.global_vault.clone(),
                 &self.system_program,
-                890880,
+                1000000,
             )?;
         }
         Ok(())

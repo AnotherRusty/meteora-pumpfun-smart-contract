@@ -1,15 +1,20 @@
 use crate::constants::*;
 use crate::errors::ContractError;
-use crate::state::bondingcurve::*;
+use crate::state::{bondingcurve::*,config::*};
 use crate::state::meteora::{get_function_hash, get_lock_lp_ix_data};
 use anchor_lang::prelude::*;
 use anchor_lang::solana_program::{instruction::Instruction, program::invoke_signed};
 use anchor_spl::{associated_token, token::TokenAccount};
-use anchor_spl::token::{ Mint};
+use anchor_spl::token:: Mint;
 use std::str::FromStr;
 
 #[derive(Accounts)]
 pub struct LockPool<'info> {
+    #[account(
+        seeds = [CONFIG.as_bytes()],
+        bump,
+    )]
+    global_config: Box<Account<'info, Config>>,
   
     #[account(
         mut,
@@ -71,8 +76,21 @@ pub struct LockPool<'info> {
     pub payer: Signer<'info>,
 
     #[account(mut)]
-    /// CHECK: Fee receiver
-    pub fee_receiver: UncheckedAccount<'info>,
+    pub authority: Signer<'info>,
+
+    /// CHECK: should be same with the address in the global_config
+    #[account(
+        mut,
+        constraint = global_config.migration_wallet == fee_receiver.key() @ContractError::IncorrectAuthority
+    )]
+    pub fee_receiver: AccountInfo<'info>,
+
+    /// CHECK: should be same with the address in the bonding_curve
+    #[account(
+        mut,
+        constraint = bonding_curve.creator == creator_receiver.key() @ContractError::IncorrectAuthority
+    )]
+    pub creator_receiver: AccountInfo<'info>,
 
     /// CHECK: Token program account
     pub token_program: UncheckedAccount<'info>,
@@ -105,8 +123,10 @@ pub struct LockPool<'info> {
 }
 
 pub fn lock_pool(ctx: Context<LockPool>) -> Result<()> {
-    
-    // msg!("Create pool: end {:?}", ctx.accounts.payer_pool_lp);
+    require!(
+        ctx.accounts.authority.key() == ctx.accounts.global_config.migration_authority.key(),
+        ContractError::InvalidMigrationAuthority
+    );
 
     require!(
         ctx.accounts.meteora_program.key() == Pubkey::from_str(METEORA_PROGRAM_KEY).unwrap(),
@@ -118,7 +138,6 @@ pub fn lock_pool(ctx: Context<LockPool>) -> Result<()> {
         &[ctx.bumps.global_vault],
     ]];
 
-
     let meteora_program_id: Pubkey = Pubkey::from_str(METEORA_PROGRAM_KEY).unwrap();
     let source_tokens = ctx.accounts.payer_pool_lp.clone();
     let lp_mint_amount = ctx.accounts.payer_pool_lp.amount / 2;
@@ -127,7 +146,7 @@ pub fn lock_pool(ctx: Context<LockPool>) -> Result<()> {
     let escrow_accounts = vec![
         AccountMeta::new(ctx.accounts.pool.key(), false),
         AccountMeta::new(ctx.accounts.lock_escrow.key(), false),
-        AccountMeta::new_readonly(ctx.accounts.payer.key(), false),
+        AccountMeta::new_readonly(ctx.accounts.creator_receiver.key(), false),
         AccountMeta::new_readonly(ctx.accounts.lp_mint.key(), false),
         AccountMeta::new(ctx.accounts.payer.key(), true), // Bonding Curve Sol Escrow is the payer/signer
         AccountMeta::new_readonly(ctx.accounts.system_program.key(), false),
@@ -142,7 +161,6 @@ pub fn lock_pool(ctx: Context<LockPool>) -> Result<()> {
         AccountMeta::new_readonly(ctx.accounts.system_program.key(), false),
     ];
 
-
     let escrow_instruction = Instruction {
         program_id: meteora_program_id,
         accounts: escrow_accounts,
@@ -155,14 +173,14 @@ pub fn lock_pool(ctx: Context<LockPool>) -> Result<()> {
         data: get_function_hash("global", "create_lock_escrow").into(),
     };
 
-
     invoke_signed(
         &escrow_instruction,
         &[
             ctx.accounts.pool.to_account_info(),
             ctx.accounts.lock_escrow.to_account_info(),
-            ctx.accounts.payer.to_account_info(),
+            ctx.accounts.creator_receiver.to_account_info(),
             ctx.accounts.lp_mint.to_account_info(),
+            ctx.accounts.payer.to_account_info(),
             ctx.accounts.system_program.to_account_info(),
         ],
         signer_seeds,
@@ -180,7 +198,6 @@ pub fn lock_pool(ctx: Context<LockPool>) -> Result<()> {
         ],
         signer_seeds,
     )?;
-
 
     associated_token::create_idempotent(CpiContext::new(
         ctx.accounts.associated_token_program.to_account_info(),
@@ -205,7 +222,6 @@ pub fn lock_pool(ctx: Context<LockPool>) -> Result<()> {
             system_program: ctx.accounts.system_program.to_account_info(),
         },
     ))?;
-
 
     // Lock Pool
     let lock_accounts = vec![
@@ -239,7 +255,6 @@ pub fn lock_pool(ctx: Context<LockPool>) -> Result<()> {
         AccountMeta::new_readonly(ctx.accounts.a_vault_lp_mint.key(), false),
         AccountMeta::new_readonly(ctx.accounts.b_vault_lp_mint.key(), false),
     ];
-
 
     let lock_instruction = Instruction {
         program_id: meteora_program_id,

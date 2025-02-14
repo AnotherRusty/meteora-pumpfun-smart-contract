@@ -25,7 +25,9 @@ import {
   TEST_INITIAL_VIRTUAL_SOL_RESERVES,
   TEST_INITIAL_REAL_TOKEN_RESERVES,
   SEED_BONDING_CURVE,
-  SEED_CONFIG
+  SEED_CONFIG,
+  TEST_INITIAL_METEORA_TOKEN_RESERVES,
+  TEST_INITIAL_METEORA_SOL_AMOUNT,
 } from "../lib/constant";
 import { createMarket } from "../lib/create-market";
 import { createUmi } from '@metaplex-foundation/umi-bundle-defaults';
@@ -93,20 +95,19 @@ export const setClusterConfig = async (
 };
 
 export const configProject = async () => {
+
+  const teamWallet = new PublicKey("Br4NUsLoHRgAcxTBsDwgnejnjqMe5bkyio1YCrM3gWM2")
+  const migrationWallet = new PublicKey("DQ8fi6tyN9MPD5bpSpUXxKd9FVRY2WcnoniVEgs6StEW");
   // Create a dummy config object to pass as argument.
   const newConfig = {
     authority: payer.publicKey,
-    pendingAuthority: PublicKey.default,
-
-    teamWallet: payer.publicKey,
-
-    initBondingCurve: TEST_INIT_BONDING_CURVE,
+    migrationAuthority: payer.publicKey,
+    teamWallet: teamWallet,
+    migrationWallet: migrationWallet,
+    initBondingCurve: new BN(TEST_INIT_BONDING_CURVE),
     platformBuyFee: 0.69, // Example fee: 0.69%
     platformSellFee: 0.69, // Example fee: 0.69%
     platformMigrationFee: 0.69, //  Example fee: 0.69%
-
-    curveLimit: new BN(62_000_000_000), //  Example limit: 42 SOL
-
     lamportAmountConfig: {
       range: { min: new BN(15_000_000_000), max: new BN(20_000_000_000) },
     },
@@ -114,10 +115,14 @@ export const configProject = async () => {
       range: { min: new BN(1_000_000_000), max: new BN(1_000_000_000) },
     },
     tokenDecimalsConfig: { range: { min: 6, max: 6 } },
+    initialVirtualTokenReservesConfig: new BN(TEST_INITIAL_VIRTUAL_TOKEN_RESERVES),
+    initialVirtualSolReservesConfig: new BN(TEST_INITIAL_VIRTUAL_SOL_RESERVES),
+    initialRealTokenReservesConfig: new BN(TEST_INITIAL_REAL_TOKEN_RESERVES),
+    initialMeteoraTokenReserves: new BN(TEST_INITIAL_METEORA_TOKEN_RESERVES),
+    initialMeteoraSolAmount: new BN(TEST_INITIAL_METEORA_SOL_AMOUNT),
 
-    initial_virtual_token_reserves_config: TEST_INITIAL_VIRTUAL_TOKEN_RESERVES,
-    initial_virtual_sol_reserves_config: TEST_INITIAL_VIRTUAL_SOL_RESERVES,
-    initial_real_token_reserves_config: TEST_INITIAL_REAL_TOKEN_RESERVES,
+    curveLimit: new BN(62_000_000_000), //  Example limit: 42 SOL
+    initialized: false,
   };
 
   const tx = await createConfigTx(
@@ -130,9 +135,13 @@ export const configProject = async () => {
   await execTx(tx, solConnection, payer);
 };
 
-
-
 export const createBondingCurve = async () => {
+  const configPda = PublicKey.findProgramAddressSync(
+    [Buffer.from(SEED_CONFIG)],
+    program.programId
+  )[0];
+  const configAccount = await program.account.config.fetch(configPda);
+
   const tx = await createBondingCurveTx(
     TEST_DECIMALS,
     TEST_TOKEN_SUPPLY,
@@ -144,7 +153,7 @@ export const createBondingCurve = async () => {
     TEST_URI,
 
     payer.publicKey,
-
+    configAccount.teamWallet,
     solConnection,
     program
   );
@@ -170,7 +179,6 @@ export const swap = async (
   await execTx(tx, solConnection, payer);
 };
 
-export const FEE_RECEIVER = publicKey("3bM4hewuZFZgNXvLWwaktXMa8YHgxsnnhaRfzxJV944P");
 export const METEORA_CONFIG = publicKey("BdfD7rrTZEWmf8UbEBPVpvM3wUqyrR8swjAy5SNT8gJ2");
 
 export const initMigrationTx = async (mint: string) => {
@@ -184,6 +192,7 @@ export const initMigrationTx = async (mint: string) => {
     program.programId
   )[0];
   const configAccount = await program.account.config.fetch(configPda);
+  console.log("configAccount: ", configAccount);
 
   const tokenAMint = NATIVE_MINT;
 
@@ -192,9 +201,12 @@ export const initMigrationTx = async (mint: string) => {
 
   // Needs to as defined in smart contract
   const config = toWeb3JsPublicKey(METEORA_CONFIG);
-  const feeReceiver = toWeb3JsPublicKey(FEE_RECEIVER);
+  const feeReceiver = configAccount.migrationWallet;
 
   const bondingCurve = PublicKey.findProgramAddressSync([Buffer.from(SEED_BONDING_CURVE), tokenBMint.toBytes()], program.programId)[0];
+
+  const bondingCurvedata = await program.account.bondingCurve.fetch(bondingCurve);
+
 
   const poolPubkey = derivePoolAddressWithConfig(tokenAMint, tokenBMint, config, ammProgram.programId);
 
@@ -265,7 +277,7 @@ export const initMigrationTx = async (mint: string) => {
   ];
 
   // LP ata of bonding curve
-  const payerPoolLp = getAssociatedTokenAddressSync(lpMint,  payer.publicKey);
+  const payerPoolLp = getAssociatedTokenAddressSync(lpMint,  bondingCurvedata.creator);
 
   const setComputeUnitLimitIx = ComputeBudgetProgram.setComputeUnitLimit({
       units: 20_000_000,
@@ -291,12 +303,17 @@ export const initMigrationTx = async (mint: string) => {
   const [mintMetadata, _mintMetadataBump] = deriveMintMetadata(lpMint);
   const [tokenBMetadata, _tokenBMetadataBump] = deriveMintMetadata(lpMint);
 
+  console.log("bondingCurvedata.creator", bondingCurvedata.creator.toBase58());
   // Escrow for claim authority Payer
-  const [lockEscrowPK] = deriveLockEscrowPda(poolPubkey,  payer.publicKey, ammProgram.programId);
+  const [lockEscrowPK] = deriveLockEscrowPda(poolPubkey, bondingCurvedata.creator, ammProgram.programId);
   const [escrowAta, createEscrowAtaIx] = await getOrCreateATAInstruction(lpMint, lockEscrowPK, solConnection, payer.publicKey);
+
+  console.log("lockEscrowPK : {?}, escrowAta : {?}", lockEscrowPK, escrowAta);
 
   const [lockEscrowPK1] = deriveLockEscrowPda(poolPubkey,  feeReceiver, ammProgram.programId);
   const [escrowAta1, createEscrowAtaIx1] = await getOrCreateATAInstruction(lpMint, lockEscrowPK1, solConnection, payer.publicKey);
+
+  console.log("lockEscrowPK1 : {?}, escrowAta1 : {?}", lockEscrowPK1, escrowAta1);
 
   console.log("create txLockPool  transaction start");
 
@@ -315,7 +332,9 @@ export const initMigrationTx = async (mint: string) => {
           bVaultLpMint,
           payerPoolLp,
           payer: payer.publicKey,
-          feeReceiver,
+          authority: payer.publicKey,
+          feeReceiver: configAccount.migrationWallet,
+          creatorReceiver: bondingCurvedata.creator,
           tokenProgram: TOKEN_PROGRAM_ID,
           associatedTokenProgram: ASSOCIATED_TOKEN_PROGRAM_ID,
           systemProgram: SystemProgram.programId,
@@ -354,6 +373,7 @@ export const initMigrationTx = async (mint: string) => {
           protocolTokenAFee,
           protocolTokenBFee,
           payer: payer.publicKey,
+          authority: payer.publicKey,
           mintMetadata,
           rent: SYSVAR_RENT_PUBKEY,
           metadataProgram: METAPLEX_PROGRAM,
@@ -383,8 +403,6 @@ export const initMigrationTx = async (mint: string) => {
       });
 
   const addresses = [
-      // feeReceiver,
-      // feeReceiverTokenAccount,
       poolPubkey,
       config,
       lpMint,

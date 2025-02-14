@@ -5,7 +5,7 @@
  * IDL can be found at `target/idl/pump_meteora.json`.
  */
 export type PumpMeteora = {
-  "address": "w7LSvr1Y4DW9xTTdCMdxAGaFTXti2xEu1ykEUeXhTRx",
+  "address": "9MHPjXpZXgJrB4NiJVFStE5qy7Nqp7yaYpaqNe5jNfMw",
   "metadata": {
     "name": "pumpMeteora",
     "version": "0.1.0",
@@ -828,6 +828,11 @@ export type PumpMeteora = {
           "signer": true
         },
         {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
           "name": "mintMetadata",
           "writable": true
         },
@@ -874,6 +879,24 @@ export type PumpMeteora = {
         152
       ],
       "accounts": [
+        {
+          "name": "globalConfig",
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  99,
+                  111,
+                  110,
+                  102,
+                  105,
+                  103
+                ]
+              }
+            ]
+          }
+        },
         {
           "name": "bondingCurve",
           "writable": true,
@@ -971,7 +994,16 @@ export type PumpMeteora = {
           "signer": true
         },
         {
+          "name": "authority",
+          "writable": true,
+          "signer": true
+        },
+        {
           "name": "feeReceiver",
+          "writable": true
+        },
+        {
+          "name": "creatorReceiver",
           "writable": true
         },
         {
@@ -1648,11 +1680,15 @@ export type PumpMeteora = {
             "type": "pubkey"
           },
           {
-            "name": "pendingAuthority",
+            "name": "migrationAuthority",
             "type": "pubkey"
           },
           {
             "name": "teamWallet",
+            "type": "pubkey"
+          },
+          {
+            "name": "migrationWallet",
             "type": "pubkey"
           },
           {
@@ -1730,12 +1766,16 @@ export type PumpMeteora = {
             "type": "u64"
           },
           {
-            "name": "initialized",
-            "type": "bool"
+            "name": "initialMeteoraTokenReserves",
+            "type": "u64"
           },
           {
-            "name": "globalAuthority",
-            "type": "pubkey"
+            "name": "initialMeteoraSolAmount",
+            "type": "u64"
+          },
+          {
+            "name": "initialized",
+            "type": "bool"
           }
         ]
       }
