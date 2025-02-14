@@ -16,3 +16,6 @@ https://github.com/user-attachments/assets/acd04594-53ea-44ff-96a5-3c9941c95d9d
 - https://solscan.io/tx/3tMd1bARG6gkPb6NFEwnwryMirgzxz5M1XBVAeiCLSDcF1ioHhMXjpWEo5DkdPQcDpo5Zo22gbRmS2zDeZQchJi4?cluster=custom&customUrl=https://api.devnet.solana.com
 ### Lock Tx
 - https://solscan.io/tx/5XNF1knS9duDYci9q129cTe2i77sVsdMi4JCgquAJBsZKk7L8Ga1bVeRFUi5SDnShjK233dVsk4om4R8KkxWXNGK?cluster=custom&customUrl=https://api.devnet.solana.com
+
+# Contact
+[AnotherRusty](https://t.me/idioRusty)
