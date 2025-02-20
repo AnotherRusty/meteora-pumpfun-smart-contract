@@ -2,9 +2,6 @@
 
 In the original pumpfun on Solana, the virtual pools are migrated into Raydium. In this repository, the main focus is on pumpfun Meteora Migration. You can contact me if you have some questions about meteora pumpfun smart contract development.
 
-# How Works
-https://github.com/user-attachments/assets/acd04594-53ea-44ff-96a5-3c9941c95d9d
-
 # Transaction History
 ### Config Tx
 - https://solscan.io/tx/4j4teKtmVx1AdkyvWcWgRKXFzYKDKh8Gx9aLMtKk1gMao143LddWkAszgNnD[…]1VJ2h5M5?cluster=custom&customUrl=https://api.devnet.solana.com
